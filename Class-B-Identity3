@@ -1,0 +1,714 @@
+<title>造園識別圖鑑</title>
+<meta name="description" content="造園景觀乙級技能檢定識別資材與參考植物線上圖鑑，含分類查閱與隨機測驗">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500;600;700&family=Noto+Sans+TC:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+  :root{
+    --bg:#F4F7F1;
+    --surface:#FFFFFF;
+    --surface-2:#EAEFE5;
+    --text:#1B271C;
+    --text-muted:#59695C;
+    --border:#D9E1D2;
+    --accent-plant:#2F5233;
+    --accent-plant-soft:#E2ECDD;
+    --accent-material:#93601F;
+    --accent-material-soft:#F1E6D2;
+    --accent-quiz:#2A6B78;
+    --accent-quiz-soft:#DDEBEC;
+    --good:#2E7D45;
+    --good-soft:#E1F0E2;
+    --bad:#B33B3B;
+    --bad-soft:#F7E4E1;
+    --shadow: 0 1px 2px rgba(27,39,28,.06), 0 6px 20px rgba(27,39,28,.06);
+    --radius: 14px;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#12160F;
+      --surface:#1A2018;
+      --surface-2:#212820;
+      --text:#E7EEE3;
+      --text-muted:#9FB19B;
+      --border:#2E3A2A;
+      --accent-plant:#79C48B;
+      --accent-plant-soft:#1E3223;
+      --accent-material:#DDA75C;
+      --accent-material-soft:#3A2C15;
+      --accent-quiz:#7ACBDB;
+      --accent-quiz-soft:#173238;
+      --good:#79C48B;
+      --good-soft:#1C3220;
+      --bad:#E58686;
+      --bad-soft:#3A2020;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#12160F;
+    --surface:#1A2018;
+    --surface-2:#212820;
+    --text:#E7EEE3;
+    --text-muted:#9FB19B;
+    --border:#2E3A2A;
+    --accent-plant:#79C48B;
+    --accent-plant-soft:#1E3223;
+    --accent-material:#DDA75C;
+    --accent-material-soft:#3A2C15;
+    --accent-quiz:#7ACBDB;
+    --accent-quiz-soft:#173238;
+    --good:#79C48B;
+    --good-soft:#1C3220;
+    --bad:#E58686;
+    --bad-soft:#3A2020;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
+    color-scheme: dark;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.serif{font-family:'Noto Serif TC','Noto Sans TC',serif;}
+  .mono{font-family:'IBM Plex Mono',ui-monospace,monospace; font-variant-numeric: tabular-nums;}
+  a{color:inherit;}
+  button{font:inherit;color:inherit;}
+  ::selection{background:var(--accent-plant-soft);}
+
+  .app{max-width:1180px;margin:0 auto;padding:0 20px 64px;}
+
+  /* ---------- Top bar ---------- */
+  .topbar{
+    position:sticky; top:0; z-index:30;
+    background:var(--bg);
+    border-bottom:1px solid var(--border);
+    padding:18px 20px 0;
+  }
+  .topbar-inner{max-width:1180px;margin:0 auto;}
+  .brand{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; margin-bottom:14px;}
+  .brand-mark{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:34px; height:34px; border-radius:9px;
+    background:var(--accent-plant); color:var(--surface);
+    font-family:'Noto Serif TC',serif; font-weight:700; font-size:16px;
+    flex:none;
+  }
+  .brand h1{font-size:21px; font-weight:700; margin:0; letter-spacing:.01em;}
+  .brand .sub{font-size:12.5px; color:var(--text-muted); font-family:'IBM Plex Mono',monospace;}
+
+  .tabs{display:flex; gap:4px; overflow-x:auto;}
+  .tab{
+    appearance:none; border:none; background:none; cursor:pointer;
+    padding:10px 16px 12px; font-size:14.5px; font-weight:600;
+    color:var(--text-muted); border-bottom:2.5px solid transparent;
+    white-space:nowrap;
+    display:flex; align-items:center; gap:7px;
+  }
+  .tab .count{font-family:'IBM Plex Mono',monospace; font-size:11.5px; font-weight:500;
+    background:var(--surface-2); padding:1px 7px; border-radius:20px; color:var(--text-muted);}
+  .tab[data-active="true"]{color:var(--text);}
+  .tab[data-mode="materials"][data-active="true"]{border-color:var(--accent-material); color:var(--accent-material);}
+  .tab[data-mode="plants"][data-active="true"]{border-color:var(--accent-plant); color:var(--accent-plant);}
+  .tab[data-mode="quiz"][data-active="true"]{border-color:var(--accent-quiz); color:var(--accent-quiz);}
+  .tab[data-mode="materials"][data-active="true"] .count{background:var(--accent-material-soft); color:var(--accent-material);}
+  .tab[data-mode="plants"][data-active="true"] .count{background:var(--accent-plant-soft); color:var(--accent-plant);}
+  .tab[data-mode="quiz"][data-active="true"] .count{background:var(--accent-quiz-soft); color:var(--accent-quiz);}
+
+  /* ---------- Browse layout ---------- */
+  .browse{display:grid; grid-template-columns:230px 1fr; gap:26px; margin-top:24px; align-items:start;}
+  @media (max-width:820px){ .browse{grid-template-columns:1fr;} }
+
+  .rail{position:sticky; top:96px;}
+  @media (max-width:820px){ .rail{position:static;} }
+  .rail-title{font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--text-muted); margin:0 0 10px 2px; font-family:'IBM Plex Mono',monospace;}
+  .rail-list{display:flex; flex-direction:column; gap:2px; list-style:none; margin:0; padding:0;}
+  .rail-btn{
+    display:flex; justify-content:space-between; align-items:center; gap:8px;
+    width:100%; text-align:left; padding:9px 12px; border-radius:9px; border:1px solid transparent;
+    background:none; cursor:pointer; font-size:14px; color:var(--text);
+  }
+  .rail-btn:hover{background:var(--surface-2);}
+  .rail-btn[data-active="true"]{background:var(--surface); border-color:var(--border); box-shadow:var(--shadow); font-weight:600;}
+  .rail-btn .n{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--text-muted);}
+
+  .panel-head{display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom:16px;}
+  .panel-head h2{font-size:19px; margin:0;}
+  .search{
+    display:flex; align-items:center; gap:8px;
+    background:var(--surface); border:1px solid var(--border); border-radius:10px;
+    padding:8px 12px; min-width:220px; flex:1; max-width:320px;
+  }
+  .search input{border:none; outline:none; background:none; color:var(--text); font-size:14px; width:100%;}
+  .search svg{flex:none; opacity:.55;}
+
+  .grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:10px;}
+  .item-card{
+    text-align:left; cursor:pointer; background:var(--surface); border:1px solid var(--border);
+    border-radius:11px; padding:12px 13px 13px; display:flex; flex-direction:column; gap:5px;
+    transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+  }
+  .item-card:hover{box-shadow:var(--shadow); transform:translateY(-1px);}
+  .item-card:focus-visible{outline:2px solid var(--accent-plant); outline-offset:2px;}
+  .item-card .name{font-weight:700; font-size:14.5px;}
+  .item-card .teaser{font-size:12.5px; color:var(--text-muted); overflow:hidden; text-overflow:ellipsis; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;}
+  .item-card .chip{align-self:flex-start; font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.02em; padding:2px 7px; border-radius:20px;}
+  [data-mode="materials"] .item-card .chip{background:var(--accent-material-soft); color:var(--accent-material);}
+  [data-mode="plants"] .item-card .chip{background:var(--accent-plant-soft); color:var(--accent-plant);}
+
+  .empty-note{color:var(--text-muted); font-size:14px; padding:30px 4px;}
+
+  /* ---------- Modal detail ---------- */
+  .backdrop{
+    position:fixed; inset:0; background:rgba(10,14,10,.45); backdrop-filter:blur(2px);
+    display:flex; align-items:flex-start; justify-content:center; padding:6vh 16px;
+    z-index:100; overflow-y:auto;
+  }
+  .modal{
+    background:var(--surface); border-radius:16px; max-width:600px; width:100%;
+    box-shadow:0 20px 60px rgba(0,0,0,.35); border:1px solid var(--border);
+    animation:pop .16s ease;
+  }
+  @keyframes pop{from{opacity:0; transform:translateY(6px) scale(.99);} to{opacity:1; transform:none;}}
+  .modal-head{display:flex; align-items:flex-start; justify-content:space-between; gap:14px; padding:22px 24px 14px; border-bottom:1px solid var(--border);}
+  .modal-head h3{font-size:21px; margin:0 0 6px;}
+  .modal-head .chip{display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:11px; padding:3px 9px; border-radius:20px;}
+  [data-mode="materials"] .modal-head .chip{background:var(--accent-material-soft); color:var(--accent-material);}
+  [data-mode="plants"] .modal-head .chip{background:var(--accent-plant-soft); color:var(--accent-plant);}
+  .modal-close{appearance:none; border:none; background:var(--surface-2); width:32px; height:32px; border-radius:50%; cursor:pointer; flex:none; font-size:16px; line-height:1;}
+  .modal-body{padding:16px 24px 26px; display:flex; flex-direction:column; gap:14px;}
+  .field-row .label{font-family:'IBM Plex Mono',monospace; font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--text-muted); margin-bottom:3px;}
+  .field-row .value{font-size:14.5px;}
+  .modal-body ul{margin:0; padding-left:1.1em; display:flex; flex-direction:column; gap:6px;}
+  .modal-body li{font-size:14.5px;}
+
+  /* ---------- Quiz ---------- */
+  .quiz-wrap{margin-top:26px; max-width:640px;}
+  .quiz-card{background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:26px 26px 24px; box-shadow:var(--shadow);}
+  .quiz-setting-row{display:flex; flex-direction:column; gap:8px; margin-bottom:20px;}
+  .quiz-setting-row .label{font-size:13px; font-weight:600; color:var(--text-muted);}
+  .pillset{display:flex; gap:8px; flex-wrap:wrap;}
+  .pill{
+    appearance:none; cursor:pointer; border:1px solid var(--border); background:var(--surface-2);
+    border-radius:20px; padding:7px 15px; font-size:13.5px; color:var(--text);
+  }
+  .pill[data-active="true"]{background:var(--accent-quiz); border-color:var(--accent-quiz); color:#fff;}
+  .checkgrid{display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:8px; margin-top:4px;}
+  .checkchip{
+    display:flex; align-items:center; gap:9px; text-align:left; cursor:pointer;
+    border:1px solid var(--border); background:var(--surface-2); border-radius:10px; padding:9px 12px; font-size:13.5px;
+  }
+  .checkchip .box{
+    flex:none; width:16px; height:16px; border-radius:5px; border:1.5px solid var(--border);
+    display:flex; align-items:center; justify-content:center; font-size:11px; color:#fff;
+    background:var(--surface);
+  }
+  .checkchip[data-active="true"]{border-color:var(--accent-quiz); background:var(--accent-quiz-soft);}
+  .checkchip[data-active="true"] .box{background:var(--accent-quiz); border-color:var(--accent-quiz);}
+  .checkchip span:nth-child(2){flex:1;}
+  .checkchip .n{flex:none; font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:var(--text-muted);}
+  .btn-primary{
+    appearance:none; cursor:pointer; border:none; background:var(--accent-quiz); color:#fff;
+    border-radius:11px; padding:13px 20px; font-size:15px; font-weight:700; width:100%;
+  }
+  .btn-primary:hover{filter:brightness(1.05);}
+  .btn-ghost{
+    appearance:none; cursor:pointer; border:1px solid var(--border); background:none; color:var(--text);
+    border-radius:11px; padding:11px 18px; font-size:14px; font-weight:600;
+  }
+  .qz-top{display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; gap:14px;}
+  .qz-progress{font-family:'IBM Plex Mono',monospace; font-size:12.5px; color:var(--text-muted);}
+  .qz-score{font-family:'IBM Plex Mono',monospace; font-size:12.5px; color:var(--accent-quiz); font-weight:600;}
+  .progress-bar{height:5px; border-radius:4px; background:var(--surface-2); overflow:hidden; margin-bottom:20px;}
+  .progress-bar > div{height:100%; background:var(--accent-quiz);}
+  .qz-tag{display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:10.5px; padding:2px 8px; border-radius:20px; margin-bottom:10px;}
+  .qz-tag.plant{background:var(--accent-plant-soft); color:var(--accent-plant);}
+  .qz-tag.material{background:var(--accent-material-soft); color:var(--accent-material);}
+  .qz-question{font-size:17px; font-weight:600; margin:0 0 18px; text-wrap:balance;}
+  .options{display:flex; flex-direction:column; gap:9px; margin-bottom:6px;}
+  .opt{
+    text-align:left; display:flex; gap:11px; align-items:flex-start;
+    border:1px solid var(--border); background:var(--surface-2); border-radius:11px;
+    padding:12px 14px; cursor:pointer; font-size:14.5px;
+  }
+  .opt:hover:not([disabled]){border-color:var(--accent-quiz);}
+  .opt .k{font-family:'IBM Plex Mono',monospace; font-weight:700; color:var(--text-muted); flex:none;}
+  .opt[data-state="correct"]{background:var(--good-soft); border-color:var(--good);}
+  .opt[data-state="correct"] .k{color:var(--good);}
+  .opt[data-state="wrong"]{background:var(--bad-soft); border-color:var(--bad);}
+  .opt[data-state="wrong"] .k{color:var(--bad);}
+  .opt[disabled]{cursor:default;}
+  .feedback{display:flex; align-items:center; gap:8px; font-size:13.5px; font-weight:700; margin:14px 0 4px;}
+  .feedback.correct{color:var(--good);}
+  .feedback.wrong{color:var(--bad);}
+  .qz-actions{display:flex; justify-content:flex-end; margin-top:10px;}
+
+  .summary-score{display:flex; align-items:baseline; gap:10px; margin-bottom:6px;}
+  .summary-score .big{font-family:'Noto Serif TC',serif; font-size:44px; font-weight:700; color:var(--accent-quiz);}
+  .summary-score .of{font-size:15px; color:var(--text-muted);}
+  .summary-msg{color:var(--text-muted); font-size:14px; margin-bottom:20px;}
+  .review-list{display:flex; flex-direction:column; gap:10px; margin:18px 0 22px; max-height:340px; overflow-y:auto;}
+  .review-item{border:1px solid var(--border); border-radius:10px; padding:11px 13px; font-size:13px;}
+  .review-item .q{font-weight:600; margin-bottom:4px;}
+  .review-item .a{color:var(--good);}
+  .review-item .a.wrong-was{color:var(--bad); text-decoration:line-through; margin-right:6px;}
+
+  footer{margin-top:56px; padding-top:18px; border-top:1px solid var(--border); color:var(--text-muted); font-size:12.5px; line-height:1.8;}
+</style>
+
+<div class="app">
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <span class="brand-mark">造</span>
+        <h1>造園識別圖鑑</h1>
+        <span class="sub">乙級技術士技能檢定 · 識別學科</span>
+      </div>
+      <nav class="tabs" id="tabs"></nav>
+    </div>
+  </div>
+  <div id="root" style="margin-top:4px;"></div>
+  <footer>
+    資料整理自勞動部勞動力發展署技能檢定中心造園景觀乙級技能檢定識別參考資料，僅供學科識別練習使用，請以最新公告版本為準。
+  </footer>
+</div>
+
+<script id="app-data" type="application/json">{"materials": {"title": "第一部分｜識別資材（介質‧肥料‧資材‧儀器‧雜草‧病蟲害）", "subcats": [{"name": "介質‧肥料‧資材", "items": [{"name": "蓄水晶粒", "desc": ["工業膠質合成產品", "易吸水膨漲，蓄水性強", "園藝上可作為栽培介質應用", "材質穩定，不易分解"]}, {"name": "蛭石", "desc": ["雲母礦經鍛燒而成", "多孔隙，具吸附力，蓄含功能佳", "可作為栽培介質、建材等", "可拌入土壤改善物理結構性質"]}, {"name": "水苔", "desc": ["溫帶地區濕生水草(蘚苔)採集乾製而成", "易吸水，保水性佳", "可作為栽培介質應用、花藝填充介質", "種植蘭花、蕨類植物應用極廣", "常用於高空壓條作業之保水介質"]}, {"name": "發泡煉石", "desc": ["礦土揉製鍛燒而成，具孔隙，具蓄含力", "特性：清潔、無菌", "可作為栽培介質應用、景觀布置覆蓋材料、盆栽填充介質"]}, {"name": "稻殼", "desc": ["稻穀脫粒剩餘的外皮，質輕、具物理膨脹力，含大量SiO2", "可用作栽培改良介質及填充介質", "與土壤混合可拌合成輕質栽培介質", "可改善土壤物理結構"]}, {"name": "樹皮", "desc": ["木材脫皮而來的副產材質（成分：樹木的韌皮與木栓組織）", "通常呈片狀或塊狀", "質感天然，適合用於景觀布置或填充，對環境友善", "亦可作為栽培覆蓋材及填充介質"]}, {"name": "珍珠石", "desc": ["礦土鍛燒膨脹製作而成，具孔隙、具蓄含力", "化學性穩定（pH 7）", "可作為栽培改良介質或填充介質", "可混合至土壤達到改善土壤排水及通透的作用", "亦可調配成輕質栽培介質"]}, {"name": "碎木", "desc": ["修剪之木材或漂流木經剉碎而成", "粗粒料可作為覆蓋材料及填充介質", "較細粒徑的粒料可用以堆製成有機堆肥", "天然材質材料對環境相對友善"]}, {"name": "壤土", "desc": ["天然土壤，各種粒徑顆粒混合適當，質性良好", "可蓄含有機質、腐植質、無機膠質等形成土壤團粒", "為栽培作物之理想天然材料"]}, {"name": "有機質肥料", "desc": ["由有機原料經發酵完熟而成，又稱天然肥料", "富含三要素成分，可用以提供植物生長所需養料", "施入環境中需藉由環境中微生物分解始釋出營養", "適和用做基肥"]}, {"name": "椰纖", "desc": ["由棕梠科植物的枝幹殘體或果實外殼粉碎而成", "pH值約為5.5~6.5，呈弱酸性", "可作為栽培改良介質、覆蓋、填充", "或壓製成容器供栽培應用"]}, {"name": "苦茶粕", "desc": ["製作苦茶油剩餘的粕梏副產品", "含天然茶皂等可溶性有機質，為天然的害蟲避忌劑", "常用以防治水田福壽螺危害，亦可防治其他軟體動物、蚯蚓", "也可當作有機肥使用", "注意：用於水田防治時對其他水生動物亦具危害作用"]}, {"name": "尿素", "desc": ["原係生物蛋白質代謝之產物，現今工業利用合成法大量產製而成", "含氮量高達46%，為效率極佳的氮素補充肥料", "pH呈中性反應，溶解性佳，可調配成液肥施用"]}, {"name": "肥料棒", "desc": ["為棒狀（或柱狀）肥料製品，肥料混合其他固著材質壓製而成", "屬緩效性作用，可直接插入土壤中施用，方便省事", "亦可釘著於蛇木板或盆器上使用"]}, {"name": "緩效性肥料", "desc": ["由一般肥料再加工製作而成", "有包膜型、裹覆型、交換樹脂型等", "效期長，不易造成肥傷、肥害", "適合作為基肥使用"]}, {"name": "肥料注射器", "desc": ["將肥料有效型態注入植物體的器具", "可作為注射施肥使用，亦有注射藥劑的功能"]}, {"name": "苦土石灰（鈣鎂肥or鎂鈣肥）", "desc": ["富含鈣、鎂等有效成分，水解後有提升pH值功能", "可作為栽培肥料應用", "亦可施放於酸性土壤，能緩慢中和土壤化性，且不易造成土壤物理性劣變"]}, {"name": "有機粒肥", "desc": ["原料：有機質，經發酵熟成後壓製或揉製而成", "可作為栽培肥料應用，效用緩慢，可作為「基肥」使用", "施放於田間經微生物作用後緩慢釋出營養成分"]}, {"name": "液肥濃縮粉末", "desc": ["將植物生長所需營養成分製作成可溶性粉末", "經加水稀釋後可用作為栽培肥料施用，亦可施放葉面做「葉面施肥」", "使用時須依比例稀釋，過濃或過稀都不正確"]}, {"name": "硫酸銨", "desc": ["硫酸銨，簡稱硫胺，又稱硫酸錏", "含有效銨態N 21%，可作栽培肥料施用", "屬「生理酸性」肥料，長期施用會導致土壤酸化", "禁與鹼性肥料或草木灰混用，以免氨揮發"]}, {"name": "過磷酸鈣", "desc": ["呈灰白色粉末或疏鬆顆粒態", "為含鈣、磷等有效成分之複合性肥料", "溶於水呈弱酸性反應", "可作為栽培肥料應用，主要為磷肥", "但在石灰質或強酸性土壤中，易被固定，降低肥效"]}, {"name": "氯化鉀", "desc": ["水溶性肥料，提供K⁺離子", "俗稱「咖哩肥」或「紅加里」，可作為栽培肥料應用", "溶於水呈中性反應"]}, {"name": "電纜線", "desc": ["接配電使用，通常用於較大負載的動力電", "為2條以上內芯構成，外覆包被", "可供小型室外輸配電使用"]}, {"name": "白扁線", "desc": ["雙芯輸配電線，外被白色膠膜而得名", "常用於小型輸配電使用"]}, {"name": "變壓器", "desc": ["調整或轉換電壓使用", "常用於室外型低電壓電氣設施，或小型自動控制系統配電應用"]}, {"name": "電源控制箱", "desc": ["輸配電迴路控制、中繼總集", "或控制調節儀器裝置所在或集中點"]}, {"name": "定時器", "desc": ["控制調節電源動作時間之裝置", "適用：景觀照明系統、景觀灌溉裝置（定時系統）"]}, {"name": "防腐木材", "desc": ["經化學、物理等加工處理過程而成的木料", "可對抗蠹蟲、腐朽菌等作用，延長木構設施使用年限", "CCA（砷酸鉻化銅）、ACQ（烷基銅胺化合物）、MCA（微米銅唑化合物）、Timbor（硼化合物，主要用於室內角材）"]}, {"name": "枕木", "desc": ["原為舖設鐵軌枕設的木材，回收後尚可供作景觀等用途", "目前亦有進口全新品", "用途：舖面、收邊、框界、戶外街俱", "屬耐候型材料，依材質部分仍容易朽蝕腐爛"]}, {"name": "抿石子", "desc": ["泥作工法之一", "原料：水泥漿、石粉、細石粒", "適用：舖面、牆面、硬體設施表面處理，亦可配合設計作圖面處理"]}, {"name": "塑膠仿木", "desc": ["利用回收塑膠原料加工製作成仿木質紋理成品", "可替代作為木構造材料", "耐候佳，適宜用為戶外設施"]}, {"name": "植生綠牆", "desc": ["立面綠化栽植的界面材料", "有多種式樣，如組合連接槽、壁毯式等", "可搭配設計做圖案規劃", "可將小區域綠化量體效益放大"]}, {"name": "排水板", "desc": ["人工地盤栽培底層排水裝置材料", "以架高式處理，增加栽植層土壤下方的排水逕流，增加排水功能"]}, {"name": "塗膜式防水劑", "desc": ["工業合成膠狀物質，可塗抹於硬體鋪面表層，形成隔水層，達到防水的功能", "常見如彈性泥、PU、環氧樹脂"]}]}, {"name": "儀器‧機具‧工具", "items": [{"name": "雷射測距儀", "desc": ["透過雷射反射測量空間距離之儀器", "可快速簡易量測距離尺寸", "適用於空間障礙複雜的場所之量測，測量精準度佳"]}, {"name": "雷射水平儀", "desc": ["利用投射雷射水平或垂直線作用", "可方便確認短距內的水平或垂直區位、角度", "缺點：無法長距離或大面積量測"]}, {"name": "水平儀", "desc": ["校準後可測量水平高程", "適合於大範圍的水平定位量測確認", "儀器校平方法：踹定螺旋旋轉，依右手拇指定則操作"]}, {"name": "平板儀", "desc": ["用於小範圍平面測量", "快速繪製完成基地平面圖"]}, {"name": "枝條粉碎機", "desc": ["可將枝葉粉碎成細小碎塊（或碎屑）", "減小體積，或可將碎屑再堆製成堆肥"]}, {"name": "夯實機", "desc": ["應用在土方夯實或鋪面鋪設時整平作業使用", "利用滾壓、震動原理，以夯實土方（或地坪）", "動力來源：汽油或柴油"]}, {"name": "高壓沖洗機", "desc": ["利用泵浦加壓產生高壓水柱，可用以沖洗粗糙面的雜質", "如戶外的木結構物、PC鋪面、石材鋪面等"]}, {"name": "高空作業機", "desc": ["可將人員載送至離地較高處進行相關維護作業", "如喬木修剪、立面綠化作業", "作業時需依相關安全規定"]}, {"name": "馬毛刷", "desc": ["應用在PC拉毛施作", "可將PC鋪面刷出細紋粗面"]}]}, {"name": "綠肥‧雜草", "items": [{"name": "油菜", "desc": ["十字花科植物，可作為綠肥或作為蔬菜佐食", "亦可栽培取用種籽榨取油脂"]}, {"name": "羽扇豆（魯冰花）", "desc": ["豆科蝶形花亞科植物", "可與固氮根瘤菌共生，具有固氮功能", "可作為綠肥作物，常栽培於茶園區（旱田）"]}, {"name": "滿江紅", "desc": ["滿江紅科水生漂浮蕨類植物，生長於水域或水田環境", "可與藍綠藻共生，具固氮功能，為重要的水田綠肥植物", "遇冬季低溫時葉面轉為洋紅色"]}, {"name": "太陽麻", "desc": ["豆科蝶形花亞科植物，根部會與根瘤菌共生，具固氮機能", "為常見的休耕田地栽培之綠肥作物", "花色鮮黃，亦具景觀效果"]}, {"name": "紫雲英", "desc": ["豆科蝶形花亞科植物，根部會與根瘤菌共生，具固氮機能", "為常見的旱地或休耕田地栽培之綠肥作物", "嫩葉可供佐食"]}, {"name": "田菁", "desc": ["豆科蝶形花亞科植物，根部會與根瘤菌共生，具固氮機能", "為常見的休耕田地栽培之綠肥作物", "生長迅速，有機質產量極高，勝過其他綠肥作物"]}, {"name": "翼莖闊苞菊", "desc": ["菊科雜草，常見於荒廢水田或開闊易積水空地", "莖直立，四稜具翼膜構造，故名", "外來種，生長習性強，散佈快速，分布廣", "種籽藉風飄散傳播，族群迅速擴張"]}, {"name": "五節芒", "desc": ["禾本科常見雜草，生長勢強健", "種籽細小、具芒毛，隨風傳播，分布範圍極廣", "生性強健，適應性佳，廣泛分佈於台灣各地", "花頂生，冬季（11-12月）開花"]}, {"name": "甜根子草", "desc": ["禾本科常見雜草，常分布於開闊空地或河階溪床", "狀似五節芒，但花期較早（約9-10月），花穗可明顯觀察到黃色及紅色花器構造", "為優良的定砂防風植物，有助減緩秋冬季沙洲揚塵"]}, {"name": "馬齒莧", "desc": ["馬齒莧科一二年生雜草，又稱豬母乳", "常見於旱地或休耕田地", "植株可供野菜佐食"]}, {"name": "酢漿草", "desc": ["酢漿草科雜草，常見的旱田雜草", "紫花酢漿草根部具明顯鱗片、莖癬，為其主要繁殖構造", "黃花酢漿草可提供沖繩小灰蝶幼蟲食草", "皆具宿根性"]}, {"name": "天胡荽", "desc": ["繖形科一二年生雜草，喜光線充足、土壤濕潤", "常見於開闊空地、坡地、草坪間分布", "生長季：冬春季較為潮濕爽季節"]}, {"name": "大飛揚草", "desc": ["大戟科雜草，常見於旱地、休耕田地分布", "生性強健，適應力極佳", "藉種子飄散繁殖"]}, {"name": "小花蔓澤蘭", "desc": ["菊科入侵型一年生雜草，莖草質蔓性，生長勢旺盛", "分布區域廣泛，常將周邊植被包覆，致使遮蔽日照，最終趨向枯萎死亡，有「綠色之癌」稱謂", "種子可藉風力傳播，族群擴散迅速"]}, {"name": "水蜈蚣", "desc": ["莎草科雜草，喜日照充足、土壤濕潤環境", "生長迅速，分布廣泛，常於維護管理不良草坪混生", "具走莖，可由地底擴散繁殖"]}, {"name": "大花咸豐草", "desc": ["菊科多年生雜草，分布區域廣泛，外來種（入侵性）", "生性強健，繁殖力極強（種子）", "為常見的空地雜草，對本土低矮植被具排侵害性", "種子可藉人畜毛髮衣物勾附傳播"]}, {"name": "牛筋草", "desc": ["禾本科多年生雜草，生長勢強健", "根系深入土中，固著牢穩，不易拔除", "種子發芽率高，散佈迅速"]}, {"name": "香附子", "desc": ["莎草科常見雜草，俗稱「土香」", "莖橫向匍匐，每節點向上長出葉和花", "節點並膨大成小塊莖，為其主要繁殖器官，不易清除，常見於旱地，亦常與草坪混生"]}, {"name": "野莧菜", "desc": ["莧科植物，狀似莧菜，亦有用以作為野菜", "植株強健，適應性極佳，常見於荒廢旱地", "耐旱性極強，主要發生季節：夏季"]}, {"name": "紅乳草（小飛揚草）", "desc": ["大戟科常見雜草，莖細長，成紅色或暗紅色", "切斷時會滲流白色乳汁，葉小型，花小極不明顯", "生長適應性極強，常見於荒廢旱地，甚至生長於硬鋪面之上"]}, {"name": "黃鵪菜", "desc": ["菊科常見雜草，種子具纖毛易隨風飄散", "分布範圍極廣，每年秋冬季節發芽", "喜分布在半日照濕潤環境"]}, {"name": "銀膠菊", "desc": ["菊科入侵型雜草，葉不完全羽裂", "開花時花梗抽長，上著生小白花，外型酷似宿根滿天星的花", "但全株具接觸性毒素，易引發過敏，致皮膚發癢紅腫，嚴重時會造成休克，其花粉易誘發呼吸道過敏"]}, {"name": "常梗滿天星（又稱「空心蓮子草」）", "desc": ["莧科常見雜草，性喜潮濕溫暖環境", "亦常分佈於積水環境或水田（池），繁殖力極強", "易斷裂繁殖，任一小段枝條便能分生出新個體，為令人苦惱的雜草之一"]}]}, {"name": "植物保護（病蟲害‧藥劑）", "items": [{"name": "蝸牛(類)", "desc": ["屬軟體動物門腹足綱常見經濟害蟲，種類繁多，台灣常見幾種較大型種類", "喜嚙食植物柔嫩組織，造成危害，但蝸牛在生態上也是螢科昆蟲補食的對象", "雌雄同體"]}, {"name": "介殼蟲(類)", "desc": ["半翅目昆蟲，行固著生活型態，幼蟲期可移行", "移至適當環境便將其刺吸性口器插入寄主植物，外被蠟質介殼（或粉狀蠟條）", "危害寄主植物，常造成枯萎或傳播病源"]}, {"name": "蚜蟲(類)", "desc": ["半翅目昆蟲，種類繁多，世代繁殖迅速", "以刺吸式口器插入寄主植物危害，常造成受危害部位枯萎或傳播病源", "天敵：瓢蟲、草蛉、寄生蜂"]}, {"name": "尺蠖", "desc": ["鱗翅目尺蛾科昆蟲，種類多，幼蟲特徵為弓軀式運動方式", "具咀嚼式口器，以啃食寄主植物枝葉維生"]}, {"name": "金龜子(類)", "desc": ["鞘翅目昆蟲，種類繁多，幼蟲期稱為蠐螬（雞母蟲）", "以地下土壤中的有機質維生，大致上並不危害植物", "成蟲食性各異，以噬食葉、花、果等部位"]}, {"name": "椿象(類)", "desc": ["半翅目昆蟲，種類繁多，漸近式變態", "通常以刺吸式口器吸取寄主植物汁液危害，為台灣地區常見經濟害蟲", "受驚擾時會噴撒腥臭體液防禦，部分種類會導致過敏危害"]}, {"name": "天牛(類)", "desc": ["鞘翅目昆蟲，種類繁多，大部分種類以枯木或腐木維生，並不危害植物", "少數種類（但為數龐大）會將卵產在寄主植物枝幹，其幼蟲以啃食寄主木質組織維生", "造成經濟危害，甚至傳播病原"]}, {"name": "葉蟬（浮塵子）", "desc": ["同翅目昆蟲，種類繁多，以刺吸式口器危害植物", "常群聚飛躍活動，生活史：漸進變態"]}, {"name": "薊馬", "desc": ["纓翅目昆蟲，種類繁多，以特殊刨吸式口器危害寄主植物", "常造成危害部位葉子捲曲畸形", "高溫乾燥季節好發；可懸掛枯蟲貼紙進行防治"]}, {"name": "夜盜蟲", "desc": ["鱗翅目菜蛾科昆蟲，幼蟲期具咀嚼式口器發達，常於夜間出沒", "嚙咬寄主植物幼嫩組織，造成危害，白天則躲入土中"]}, {"name": "蟬", "desc": ["同翅目昆蟲，種類繁多，若蟲期棲息於地下吸取寄主植物根液", "成蟲出土現蹤，大致上對一般植物無明顯危害"]}, {"name": "刺桐釉小蜂", "desc": ["膜翅目小型昆蟲，主要危害寄主為豆科刺桐屬植物", "雌蟲將產卵管插入寄主植物嫩芽部，孵化後產生誘導物質", "刺激組織形成蟲癭，造成代謝異常，致植株弱化甚至枯死", "危害歷史：2000年迄今"]}, {"name": "入侵紅火蟻", "desc": ["膜翅目社會型昆蟲，外來入侵種，營蟻丘於地下，侵犯性極強", "造成疫區環境破壞失衡，甚至造成作物、人畜等危害", "防治：以誘殺餌劑進行防治"]}, {"name": "寄生蜂", "desc": ["膜翅目小型昆蟲，主要危害寄主為各式其他昆蟲", "雌蟲將產卵管插入寄主體內產卵，幼蟲孵化後以寄主體液、噬肉維生，羽化後交尾再產卵於其他蟲體", "可應用在生物防治的用途", "常見種類包括金小蜂科、姬蜂科、小繭蜂科等"]}, {"name": "葉蟎（紅蜘蛛）", "desc": ["蛛形綱小型節肢動物，以刺吸口器吸取寄主植物汁液", "造成植株弱化（葉片白化），減產甚至枯死", "利用噴灌或灑水裝置增加環境濕度，可降低族群發生"]}, {"name": "煤煙病", "desc": ["病原菌為真菌類的子囊菌", "成因為半翅目昆蟲吸取寄主植物枝液後排出蜜露，黏散於其他植物的枝葉或周邊設施上，該病源接受到蜜露滋養", "形成黑色菌隙組織，會造成受害植物光照弱化，影響代謝"]}, {"name": "白粉病", "desc": ["病原菌為真菌類的子囊菌", "病原孢子於適當環境感染寄主後，菌絲深入寄主組織，再將孢子囊向外伸出，致表面產生白粉狀", "若發病嚴重時，植物葉片會產生皺縮、不平，葉片向外捲曲"]}, {"name": "銹病", "desc": ["病原菌為真菌類的擔子菌", "病原孢子於適當環境感染寄主後，菌絲深入寄主組織", "再將孢子囊向外伸出，致表面產生銹狀孢子囊"]}, {"name": "日燒病", "desc": ["受害植物在強烈高溫日照，又水分輸導不平衡狀況下，灼傷組織引起生理病害，又名葉燒", "常見於室內植物曝曬，或盆栽植物夏季高溫、強風過後反應"]}, {"name": "褐根腐病", "desc": ["病原菌為有害木層孔菌，引起木本植物的根部及莖基部木材白化腐朽，樹皮腐敗", "導致莖基部環狀壞死，因而輸導功能遭受破壞，而引起植株萎凋死亡", "屬強勢的樹木病害", "防治：移除病株，清除罹病殘根，進行土壤薰蒸（邁隆）消毒"]}, {"name": "菟絲子", "desc": ["旋花科", "病原為高等開花植物，種子初發芽時植株尚呈綠色，具光合作用機能", "逐漸接觸大寄主植物枝葉後便產生吸盤構造，伸入寄主體內直接吸取代謝養分營生", "顏色轉為黃、澄色系，夏~秋季為開花結果期"]}, {"name": "加保扶（農藥名）", "desc": ["為系統性殺蟲劑", "作用機制：神經毒性（乙醯膽鹼酯酶抑制）"]}, {"name": "免賴得（農藥名）", "desc": ["殺黴菌劑（子囊菌與不完全菌）", "作用機制：抑制病原菌細胞分裂", "系統運行性農藥：低毒性農藥"]}, {"name": "邁隆（農藥名）", "desc": ["土壤薰蒸劑（灰白色粉劑）", "接觸到潮濕土壤時，會產生具輕微嗆味之蒸氣", "主要用於褐根腐病土壤消毒"]}, {"name": "三泰芬（農藥名）", "desc": ["系統性殺菌劑（真菌）"]}, {"name": "黏蟲板", "desc": ["非農藥防蟲資材，黏著誘殺害蟲", "利用光譜誘引昆蟲", "常用：黃色、淺藍色、淺綠色"]}, {"name": "害蟲誘殺器", "desc": ["非農藥防治資材", "以食餌、費洛蒙、藥劑等誘捕害蟲的裝置"]}, {"name": "誘殺餌劑", "desc": ["誘殺害蟲的餌料製劑"]}, {"name": "松樹線蟲病", "desc": ["因松材線蟲引起的松科植物病害", "媒介：松斑天牛", "罹病植株葉部萎凋，呈紅棕色"]}]}]}, "plants": {"title": "第二部分｜識別參考植物（共 157 種）", "subcats": [{"name": "常綠喬木", "items": [{"name": "杜英", "fields": {"科別/生活型": "杜英科（or 椴樹科、膽八樹科）常綠喬木", "原產地": "中國大陸、日本、琉球及臺灣", "特徵": "老葉成熟後轉紅，並掛樹上一段時間才落下", "用途": "一般庭院、行道樹、造林樹種", "生態": "花可誘引昆蟲；果可誘鳥、松鼠（囓齒類）等", "繁殖方法": "播種", "相近種類": "錫蘭橄欖（鋸葉杜英、齒葉杜英）、水石榕（大花杜英）"}}, {"name": "楊梅（樹梅）", "fields": {"科別/生活型": "楊梅科，多年生常綠喬木", "原產地": "分布華南、日、韓、菲；台灣有野生種自然分布", "特徵": "小喬木、生長緩慢，（核果）果可食；雌雄異株植物", "用途": "一般庭院、果樹", "生態": "蟲媒花，花可誘引昆蟲；果可誘鳥、松鼠"}}, {"name": "琴葉榕", "fields": {"科別/生活型": "桑科榕屬，常綠喬木，外來種", "原產地": "熱帶非洲", "特徵": "葉大型，狀似提琴；隱頭花序", "用途": "一般庭院、行道樹，小苗耐蔭性佳，常用於室內擺設", "生態": "隱頭果可誘鳥啄食"}}, {"name": "麵包樹（桑科：波羅蜜屬）", "fields": {"相近種類": "波蘿蜜——果大型，可食，重10~15公斤，最大者可達50公斤", "備註": "原始資料此頁僅有簡短標示，未列出完整欄位"}}, {"name": "雨豆樹", "fields": {"科別/生活型": "豆科含羞草亞科，常綠喬木", "原產地": "中美洲、加勒比海地區；台灣中南部地區常有栽種，北部開花狀況不佳", "用途": "一般庭院、行道樹，經濟造林木", "花期": "夏季", "相近種類": "細葉合歡、粉撲花、美洲合歡"}}, {"name": "竹柏", "fields": {"科別/生活型": "羅漢松科，常綠喬木", "原產地": "大陸、日、韓、台灣", "特徵": "樹型直立、自然錐狀、生長緩慢，葉具特殊香氣；雌雄異株；木材為優質家具建材", "用途": "一般庭院、行道樹，經濟造林樹種（又稱「山杉」）"}}, {"name": "水柳", "fields": {"科別/生活型": "楊柳科，常綠喬木", "原產地": "台灣", "特徵": "樹型開展、雌雄異株，雌株春季果實成熟會飄落柳絮，攜附種子飄散傳播，屬典型先驅樹種", "用途": "一般庭院、生態水岸", "生態": "常分布於水岸或開闊荒地，對強風環境抗力強，葉為台灣黃斑蝶、紅擬豹斑蝶幼蟲食草", "相近種類": "早柳、垂柳"}}, {"name": "白千層", "fields": {"別名": "又名「日本相思樹」", "科別/生活型": "桃金孃科，常綠喬木（外來種）", "原產地": "南亞、澳洲", "特徵": "樹型開展，樹皮外層栓皮發達會自然剝落（脫皮樹）", "用途": "一般庭院、行道樹；對強風的耐受性極佳，常用於濱海防風樹籬栽植", "繁殖方法": "播種；扦插、壓條", "相近種類": "澳洲茶樹（五脈白千層）、紅瓶刷樹、串錢柳、美葉紅千層"}}, {"name": "大葉山欖", "fields": {"科別/生活型": "山欖科，常綠喬木", "原產地": "台灣", "特徵": "樹型直立、輕微開展，葉厚革質，具板根現象；木材可供建材及家俱用材", "用途": "一般庭院、行道樹，適應海岸氣候、耐鹽鹼風", "生態": "花具蜜源、果可誘食鳥類；木材可為建材"}}, {"name": "洋玉蘭", "fields": {"科別/生活型": "木蘭科，常綠喬木", "原產地": "外來種，原產美國南部", "特徵": "樹型直立、略呈錐狀，花大型，具清淡香氣；葉革質、葉背具毛絨狀，耐乾旱、熱等環境", "用途": "一般庭院、行道樹", "繁殖方法": "播種、嫁接", "相近種類": "木荷、夜合花"}}, {"name": "土肉桂", "fields": {"科別/生活型": "樟科，常綠喬木", "原產地": "台灣、東南亞等地", "特徵": "樹型開展、生長緩慢，全株具特殊香氣及甜味", "用途": "一般庭院、行道樹，經濟栽培供調味或萃取肉桂香精", "備註": "通常為維持良好的甜香味等性狀，會採用無性繁殖", "相近種類": "錫蘭肉桂、陰香肉桂（山玉桂）"}}, {"name": "水黃皮", "fields": {"科別/生活型": "豆科蝶形花亞科，常綠喬木", "原產地": "印、澳、東南亞、台灣", "特徵": "樹型開展，花淡紫色，枝葉濃密，適應海濱環境，耐鹽、鹼、風", "用途": "一般庭院、行道樹，濱海環境栽植", "生態": "花及嫩葉供琉璃波紋小灰蝶食草；種子（豆莢）具毒性（誤食頭暈、致嘔）"}}, {"name": "耳莢相思樹（又名「大葉相思樹」）", "fields": {"科別/生活型": "豆科含羞草亞科，常綠喬木", "原產地": "新幾內亞、澳洲", "特徵": "樹型開展，花黃色（呈長穗狀），耐乾旱，耐火；木材可供家具、建材及薪材", "用途": "一般庭院、行道樹；速生性經濟樹種，木材可用來做家具、建材、薪材等", "相近種類": "相思樹"}}, {"name": "光臘樹（白雞油）", "fields": {"科別/生活型": "木犀科，常綠喬木", "原產地": "台灣（特有種）", "特徵": "樹型直立、輕度向上開展，為優質的經濟樹種，其木材適合做家具、建材", "用途": "一般庭院、行道樹、理想的經濟造林樹種", "生態": "獨角仙（金龜科昆蟲）喜取食其樹液，具誘聚功能", "相近種類": "台灣櫸（雞油）、榔榆（紅雞油）"}}, {"name": "雀榕", "fields": {"科別/生活型": "桑科榕屬，常綠喬木", "原產地": "華南、日本、琉球、台灣", "特徵": "樹型開展，每年進行生理性調節落葉1-4次，隱頭花絮", "用途": "一般庭院、行道樹、優勢的先驅樹種", "生態": "隱頭果具引誘鳥類功能"}}, {"name": "台灣海桐", "fields": {"科別/生活型": "海桐科，常綠喬木", "原產地": "台灣（高屏、恆春、蘭嶼）、印度、菲律賓", "特徵": "小喬木，樹型開展，葉油亮，耐乾、熱、鹽、鹼、風；花序頂生；果實成熟轉橙黃色，具誘鳥機能", "用途": "一般庭院、行道樹、適應近海環境", "生態": "花具蜜源效果、果為理想誘鳥功能"}}, {"name": "毛柿（台灣黑檀）", "fields": {"科別/生活型": "柿樹科，常綠喬木", "原產地": "台灣（南部及東部）、東南亞、菲律賓", "特徵": "樹型直立，主幹明顯，呈小錐狀，葉油亮，具板根現象，果實表面呈毛絨狀，經後熟可供食用（但具怪味）", "用途": "一般庭院、行道樹、造林樹種", "生態": "果後熟後可食用，亦具誘鳥、獸的功能"}}, {"name": "青剛櫟", "fields": {"科別/生活型": "殼斗科，常綠喬木", "原產地": "中國、印度（喜馬拉雅山區）、韓國、台灣", "特徵": "樹型呈球狀開展，莖幹質地堅硬，為傳統農具柄材使用之理想材料", "用途": "一般庭院、行道樹、造林樹種", "生態": "果具誘鳥、獸功能，莖幹可用作種植香菇的段木"}}, {"name": "石榴", "fields": {"科別/生活型": "安石榴科，常綠大灌木或小喬木", "原產地": "南歐、中東地區（世界各地廣泛栽培）", "特徵": "小喬木，樹型開展飽滿，花果皆明顯，具觀賞性（果熟可食）", "用途": "一般庭院、行道樹", "生態": "果具理想誘鳥功能，亦有園藝種可供食用"}}, {"name": "澳洲鴨腳木", "fields": {"科別/生活型": "五加科，常綠大喬木", "原產地": "澳洲、巴布亞、印尼", "特徵": "樹型直立，莖幹單生少分枝", "用途": "一般庭院樹"}}, {"name": "銀樺", "fields": {"別名": "又名「銀橡樹」（Silver Oak）", "科別/生活型": "山龍眼科，常綠喬木，外來種", "原產地": "澳洲", "特徵": "樹型直立、略呈錐狀，葉羽裂細分，葉背呈銀灰色。花橙黃色，亦有紅色品種，花期約4-5月；木材紋理鮮亮，為理想家俱或雕刻用材", "用途": "一般庭院、行道樹", "備註": "木材具鮮豔亮麗紋理色澤，可做為理想家具材"}}, {"name": "黃玉蘭", "fields": {"科別/生活型": "木蘭科，常綠喬木", "原產地": "華南、印度、西藏、印尼（外來種）", "特徵": "樹型直立錐狀或輕度開展，花金黃色，具香氣，為典型香花植物", "用途": "一般庭院、行道樹", "生態": "葉為青帶鳳蝶重要食草"}}, {"name": "印度塔樹（長葉暗羅）", "fields": {"科別/生活型": "番荔枝科，常綠喬木", "原產地": "印度、巴基斯坦、斯里蘭卡（外來種）", "特徵": "中小型喬木，樹型細直，分支多呈下垂，葉油亮具耐蔭性", "用途": "一般庭院、行道樹"}}, {"name": "山枇杷", "fields": {"科別/生活型": "薔薇科，常綠小喬木", "原產地": "台灣", "特徵": "中小型喬木，樹型開展，花頂生，白色；果實成熟後具酸甜滋味，為良好之誘鳥植物", "用途": "一般庭院、行道樹、生態環境布置", "生態": "花白色穗狀，具觀賞性；果具良好誘鳥機能"}}, {"name": "台灣魚木", "fields": {"科別/生活型": "山柑科（或白花菜科），半落葉小喬木", "原產地": "台灣（特有亞種）", "特徵": "中小型喬木，樹型開展", "用途": "一般庭院、行道樹、生態環境營造布置", "生態": "花為良好蜜源（亦極具觀賞價值）、葉為台灣端紅粉蝶重要食草", "花期": "春夏之際（約4-5月份）"}}, {"name": "旅人蕉", "fields": {"科別/生活型": "旅人蕉科，常綠小喬木", "原產地": "外來種，原產馬達加斯加", "特徵": "莖直立單生、無分枝；葉鞘及花苞基部可積蓄水分，供沙漠旅人緊急飲用，故名。果狀似小型芭蕉，外皮堅硬，開裂後種子外被藍色種毛", "用途": "一般庭院、行道樹、耐旱及耐風性特佳"}}, {"name": "蒲葵", "fields": {"別名": "又名「扇葉葵」", "科別/生活型": "棕梠科，常綠小喬木", "原產地": "華南、日本、琉球、台灣（龜山島）", "特徵": "大型棕梠科植物，樹型單桿直立，幼苗耐蔭性極佳，常做為盆栽用於室內觀賞。葉柄具瘤刺。耐旱、鹽、風（適濱海環境）", "用途": "一般庭院、行道樹、海濱植物", "生態": "紫蛇目蝶食草；葉鞘纖維可供作生活器具", "相近種類": "華盛頓椰子"}}]}, {"name": "落葉喬木", "items": [{"name": "烏桕", "fields": {"科別/生活型": "大戟科，落葉喬木", "原產地": "中國、台灣（北部地區中低海拔）（台灣地區又稱「瓊仔樹」）", "特徵": "樹型開展，冬季低溫期葉色轉紅（本地代表性紅葉植物），對環境適應性佳", "用途": "一般庭院、行道樹、生態環境布置", "生態": "花為良好蜜源、果實具良好誘鳥效果（為代表性的先驅樹種）"}}, {"name": "黃脈刺桐", "fields": {"科別/生活型": "豆科蝶形花亞科，落葉喬木", "原產地": "外來種，原產熱帶亞洲（為刺桐的斑葉變種）", "特徵": "樹型開展，莖幹著明顯瘤刺，對環境適應性佳；葉具斑紋、花艷紅色，為理想的景觀植物", "用途": "一般庭院、行道樹", "備註": "近年飽受刺桐釉小蜂寄生危害"}}, {"name": "大葉桃花心木", "fields": {"科別/生活型": "楝科，落葉大喬木", "原產地": "中美洲（外來種）", "特徵": "樹型直立、樹勢高聳（可達20M以上）、輕度向上開展，木材為良好的樂器琴箱用材，亦為優質的家具建材；果實碩大、高懸於頂梢，內生覆翅膜的種子，可隨風飄散，有助族群擴散", "用途": "一般庭院、行道樹、重要經濟造林樹"}}, {"name": "黃花風鈴木", "fields": {"科別/生活型": "紫葳科，落葉喬木", "原產地": "墨西哥等熱帶美洲高地", "特徵": "樹型開展，冬季落葉期開花；花鮮黃色，花期春季（約2-3月），掌狀葉，果實表面覆絨毛", "用途": "一般庭院、行道樹"}}, {"name": "藍花楹", "fields": {"科別/生活型": "紫葳科，落葉喬木（又名巴西紫葳or非洲紫葳）", "原產地": "巴西、祕魯、玻利維亞、西印度群島", "特徵": "樹型開展，夏秋開花，葉羽狀複葉，小葉細密；花頂生，鮮紫色，極具景觀效益", "用途": "一般庭院、行道樹"}}, {"name": "印度紫檀", "fields": {"科別/生活型": "豆科蘇木亞科，落葉喬木", "原產地": "華南、印度、東南亞", "特徵": "主幹直立高聳，樹型輕度開展，生長快速；木材色調偏紅，質地佳，具輕微香氣，為理想的家具及建材用材", "用途": "一般庭院、行道樹、重要經濟造林植物", "生態": "嫩葉為粉蝶科蝴蝶幼蟲食草"}}, {"name": "錦葉欖仁", "fields": {"科別/生活型": "使君子科，落葉喬木，為小葉欖仁的變異栽培種", "特徵": "樹型直立、層次分明，側枝層狀輪生、平展。葉片有白色斑紋，更具觀賞效益，生長速度緩慢，適於景觀用途", "用途": "一般庭院、行道樹"}}, {"name": "菩提樹", "fields": {"科別/生活型": "桑科榕屬，多年生落葉喬木", "原產地": "外來種，原產印度（台灣地區廣泛應用栽培）", "特徵": "樹型開展，冬季或不定期生理調節落葉；隱頭果成熟後具誘引啄食，為理想誘鳥植物", "用途": "一般庭院、行道樹", "生態": "果實具良好誘鳥效果", "繁殖方法": "扦插"}}, {"name": "紫薇", "fields": {"科別/生活型": "千屈菜科，落葉喬木", "原產地": "外來種，原產中國（台灣地區廣泛應用栽培）", "特徵": "中小型落葉喬木，樹型開展，夏季盛花，花色繁多，極具觀賞效益；樹皮光滑，表皮成熟會自然脫落；木材質地堅硬，為理想的家具及農具用材", "用途": "一般庭院、行道樹；園藝栽培常嫁接於九芎（原生種）上，培育成景觀樹"}}, {"name": "流蘇", "fields": {"科別/生活型": "木犀科，落葉小喬木", "原產地": "中、日、韓、台灣（北部地區平地或台地丘陵地帶）", "特徵": "樹型開展，冠幅飽滿優美，花白色、春季盛花，果實綠轉紫色，可用種子繁殖", "用途": "一般庭院、行道樹", "生態": "花為良好蜜源、果實具良好誘鳥效果", "繁殖方法": "種子繁殖"}}, {"name": "香椿", "fields": {"科別/生活型": "楝科，落葉喬木", "原產地": "外來種，原產華北地區（台灣地區廣泛栽培）", "特徵": "樹型直立、自然分枝少；羽狀複葉，葉具特殊芳香，可做為調味佐食用途（嫩葉可當蔬菜食用，又有木本蔬菜的稱謂）", "用途": "一般庭院、行道樹、亦有栽培供食用", "繁殖方法": "根插繁殖成活率高"}}, {"name": "雞蛋花（緬梔）", "fields": {"科別/生活型": "夾竹桃科，落葉小喬木", "原產地": "墨西哥、中美洲一帶", "特徵": "樹型開展、分枝低，全株具毒性；開花期長，幾乎全年都有花，但夏、秋季為最盛", "用途": "一般庭院、行道樹", "繁殖方法": "扦插"}}, {"name": "火焰木", "fields": {"科別/生活型": "紫葳科，落葉喬木", "原產地": "西非", "特徵": "樹型直立、輕度開展，花橙至艷紅色，倒鐘形，春夏季盛花，花朵密線發達，對鳥、蜂具很好的誘引效果", "用途": "一般庭院、行道樹"}}, {"name": "無患子", "fields": {"科別/生活型": "無患子科，落葉喬木", "原產地": "華中、華南、越寮北部、韓國、台灣", "特徵": "樹型開展，其果實（果皮）具皂素，早期先民用以洗滌。冬季低溫期（12℃以下）葉色轉為鮮黃，為典型的變色樹種", "用途": "一般庭院、行道樹", "生態": "果實具有天然皂素，為天然清潔劑", "備註": "近年受荔枝椿象嚴重危害，種植時須留意避免人員遭危害"}}, {"name": "鐵刀木", "fields": {"科別/生活型": "豆科蘇木亞科，落葉喬木", "原產地": "東南亞、印度、斯里蘭卡", "特徵": "樹型開展，材質堅，為理想的建材及家具用材；花頂生，鮮黃色，具景觀觀賞效益", "用途": "一般庭院、行道樹、理想經濟造林樹種", "生態": "葉為粉蝶科數種蝴蝶幼蟲食草"}}]}, {"name": "針葉樹", "items": [{"name": "台灣肖楠", "fields": {"科別/生活型": "柏科，常綠針葉樹", "原產地": "台灣（屬台灣特有種植物）", "特徵": "樹型呈錐狀直立，主幹通直，枝葉常年翠綠，為台灣中低海拔山區理想的造林植物；形態優美具特色，亦為良好的景觀植栽", "用途": "一般庭院、行道樹，重要造林樹種", "生態": "木材質地良好，可當建材、家具，亦為重要造香原料"}}, {"name": "肯氏南洋杉", "fields": {"科別/生活型": "南洋杉科，常綠針葉木（又名花旗杉）", "原產地": "外來種，原產澳洲、新幾內亞", "特徵": "樹型直立、主幹明顯，側枝層狀輪生；樹皮具金屬光澤，成熟後開裂剝落；生長適應佳；耐風，適合用於面風地區種植", "用途": "一般庭院、行道樹", "相近種類": "小葉南洋杉"}}, {"name": "台灣二葉松", "fields": {"科別/生活型": "松科，裸子植物", "原產地": "台灣、中國南部", "特徵": "樹型開展，有時呈圓球形，主要分布於海拔700M以上山區，葉2針一束，可作為分類依據", "用途": "一般庭院、行道樹、造林樹種", "生態": "雌球果成熟後常誘引鳥類啄食種子", "相近種類": "五葉松"}}, {"name": "落羽杉", "fields": {"科別/生活型": "杉科，落葉性裸子植物", "原產地": "北美濕地沼原", "特徵": "樹型尖錐直立、主幹明顯，羽狀複葉，小葉非對稱生長，冬季低溫期葉會轉褐紅色，隨後掉落。對潮濕浸潤之土壤適應性極佳，可栽種於潤土濕地，甚至浸泡於水域。根系遇濕潤通透不良土壤會形成膝根，突出水面呼吸", "用途": "庭院（水池、水域周邊）", "生態": "適應潮濕環境、易自地面長出呼吸氣根", "相近種類": "池杉、水杉"}}, {"name": "台灣扁柏", "fields": {"科別/生活型": "柏科，裸子植物", "原產地": "台灣（特有種），分布海拔1300-2700M山坡", "特徵": "直立尖錐至圓球型，為珍貴山坡地造林樹種", "用途": "於平地林下栽植可作為灌叢態種植", "生態": "又名黃檜（Hinoki），為最上等建材或家具材"}}, {"name": "雪松", "fields": {"科別/生活型": "松科，常綠針葉木", "原產地": "外來種，原產喜馬拉雅山區、藏南地區", "特徵": "樹型優美、錐狀直立、枝葉下垂，葉色略呈灰藍色調，具景觀觀賞特色，於原生地屬大型喬木，但本地種植生長緩慢，尤其平地地區栽種，植株矮小，呈灌木型態", "用途": "庭園樹，喜潮濕涼爽環境，適山坡地"}}, {"name": "粗榧", "fields": {"科別/生活型": "粗榧科，常綠針葉木", "原產地": "中、日、韓、印度、台灣（自然分布於800M-2500M山坡地）", "特徵": "生長緩慢，分枝性佳，枝葉密緻，庭園栽培經常整形成圓球狀灌叢", "用途": "一般庭院、經濟造林樹種", "繁殖方法": "扦插、播種"}}, {"name": "台灣油杉", "fields": {"科別/生活型": "松科，常綠針葉木", "原產地": "台灣（台灣特有變種）", "特徵": "生長緩慢，樹皮受傷時會流出油狀汁液，具防腐防蟲功能，木材質地緻密，紋理漂亮，是良好的建築材料；樹形尖錐或辦開展，亦用於景觀栽培種植", "用途": "一般庭院栽植、經濟造林樹種"}}, {"name": "檀香柏", "fields": {"科別/生活型": "柏科，常綠針葉喬木", "原產地": "中國、日本", "特徵": "樹形尖錐、形似塔狀，葉色黛綠，適合用作聖誕樹裝置。原生地可長至喬木，本地多栽植於庭院花台、盆栽，供景觀布置擺設", "用途": "一般庭院，常用於聖誕樹布置；木材防腐防蟲"}}]}, {"name": "灌木", "items": [{"name": "彩葉山漆莖（雪花木、白雪樹）", "fields": {"科別/生活型": "大戟科，多年生常綠灌木，但冬季低溫會略為落葉；本種為園藝栽培種", "原產地": "原種產地大洋洲諸島", "特徵": "葉色呈現紅、白、紫等色斑，提供觀葉效益", "用途": "一般庭院造景、綠籬、盆植", "繁殖方法": "扦插法"}}, {"name": "厚葉女貞", "fields": {"科別/生活型": "木犀科，多年生常綠灌木", "原產地": "外來種，產地中國、日本、韓國", "特徵": "枝葉茂密、葉厚質堅；分枝性佳，耐修剪，耐旱、鹽、鹼、污染、強風；花頂生、白色，花期約3-6月", "用途": "一般庭院造景、綠籬，適合道路分隔帶、濱海地區種植"}}, {"name": "馬醉木", "fields": {"科別/生活型": "杜鵑花科，多年生常綠灌木", "原產地": "台灣", "特徵": "自然分布於台灣北部山坡地開闊地或林緣地帶，平地栽培適合輕度遮蔭環境。全株具劇毒；部分原住民會將枝葉搗碎浸水，萃取浸泡液噴灑當農藥使用，防除害蟲", "用途": "一般庭院造景，林下複層栽植，盆植"}}, {"name": "紅粉撲（粉撲花）", "fields": {"科別/生活型": "豆科含羞草亞科（又稱凹葉歡），多年生半落葉灌木", "原產地": "熱帶美洲、巴西", "特徵": "中大型灌木，羽狀複葉（前端小葉略呈蹄狀對稱）；花呈球狀（粉撲狀）、花色鮮紅，花期以春夏暖季為盛。適應性一般，對惡劣環境適應性差", "用途": "一般庭院造景栽植、盆栽"}}, {"name": "美洲合歡", "fields": {"科別/生活型": "豆科含羞草亞科，多年生落葉灌木", "原產地": "墨西哥、瓜地馬拉", "特徵": "中大型灌木，羽狀複葉，因栽培種植適應性佳，生長快速，本地廣泛運用於庭園景觀；花呈球型（粉撲狀）、花色鮮紅，花期以春、夏暖季為盛", "用途": "一般庭院造景栽植、盆栽"}}, {"name": "南天竹", "fields": {"科別/生活型": "小蘗科，多年生落葉性灌木", "原產地": "中國、日本", "特徵": "羽狀複葉，秋冬低溫時期葉會轉紅並逐漸脫落，生長速度中等，外型直立獨特，具良好的景觀觀賞效益", "用途": "一般庭院造景栽植、盆栽", "繁殖方法": "扦插、播種"}}, {"name": "十大功勞", "fields": {"科別/生活型": "小蘗科，多年生常綠灌木", "原產地": "中國、日本、台灣（山坡地約500-1000M處）", "特徵": "羽狀複葉、質硬，葉全緣或葉緣具尖刺構造；生長速度中等，外型直立獨特，具良好的景觀觀賞效益", "用途": "一般庭院造景栽植、盆栽，適林下栽植", "繁殖方法": "實生"}}, {"name": "草海桐", "fields": {"科別/生活型": "草海桐科，多年生常綠灌木", "原產地": "九州、琉球、太平洋諸群島、馬達加斯加、澳洲", "特徵": "葉大型、葉表油亮，主要分布於台灣各地海岸區域（沙岸、土堤、岩石及珊瑚礁隆起的區域）", "用途": "一般庭院造景栽植，耐鹽、鹼、風、乾、熱，適濱海生長", "繁殖方法": "扦插、播種"}}, {"name": "梔子花", "fields": {"科別/生活型": "茜草科，多年生常綠灌木", "原產地": "華南、中南半島、日本、台灣", "特徵": "喜溫暖、日照環境；葉濃綠光亮，花具濃郁香味；單瓣種果實可供黃色染劑或食用色素", "用途": "一般庭院造景栽植、盆栽、綠籬"}}, {"name": "銀姬小蠟", "fields": {"科別/生活型": "木犀科，多年生常綠灌木（園藝栽培種，其原始種為小葉女貞）", "特徵": "葉小型，質感細緻、葉具乳白色斑；分枝性佳，枝葉密緻，可做整型修剪栽培；適應性良好，耐旱、抗高溫、耐修剪", "用途": "一般庭院造景栽植、盆栽、綠籬", "繁殖方法": "扦插"}}, {"name": "厚葉石斑木", "fields": {"科別/生活型": "薔薇科，多年生常綠灌木", "原產地": "韓國、日本南部、琉球、小笠原諸島、台灣", "特徵": "葉厚革質、耐修剪，生性強健，耐旱、耐鹽、抗風性佳，屬固有之濱海地區栽植", "用途": "一般庭院造景栽植、盆栽、綠籬，耐鹽鹼風，適濱海環境栽植", "繁殖方法": "播種、扦插"}}, {"name": "金絲桃", "fields": {"科別/生活型": "金絲桃科，多年生落葉灌木", "原產地": "中國、日本、台灣", "特徵": "植株叢狀，枝條柔弱，分枝多；花金黃色，春夏季盛花、極具觀賞效益，花期夏季（5-6月）", "用途": "一般庭院造景栽植、盆栽、綠籬"}}, {"name": "紅樓花", "fields": {"科別/生活型": "爵床科，多年生落葉灌木", "原產地": "熱帶美洲、波多黎各", "特徵": "葉大型、深綠，生長勢佳、耐蔭；花色艷紅，開花性狀好", "用途": "一般庭院造景栽植、盆栽、綠籬，適於林下栽植", "繁殖方法": "扦插"}}, {"name": "鳳凰竹", "fields": {"科別/生活型": "禾本科竹亞科（蓬萊竹的栽培種，學名 Bambusa multiplex Raeusch. cv. Fern leaf）", "原產地": "中南半島，屬叢出狀竹類植物", "特徵": "中小型竹類植物，桿高約1.5米以下；葉小密緻，耐修剪（修剪後葉片更密緻簇生）可作造型栽培", "用途": "一般庭院造景栽植、盆栽、綠籬", "繁殖方法": "分株法"}}, {"name": "樹蘭", "fields": {"科別/生活型": "楝科常綠灌木", "原產地": "中國、東南亞諸國、台灣", "特徵": "分枝性佳，耐修剪，可作造型栽培；花小型、具清淡香氣；結籽不易，通常利用無性繁殖（扦插、壓條）", "用途": "一般庭院栽培、綠籬，老株型態獨特，亦有盆景栽種", "繁殖方法": "無性繁殖（扦插、壓條），結籽不易"}}, {"name": "英國冬青（玉利紅／玉粒紅）", "fields": {"科別/生活型": "冬青科", "原產地": "英國", "特徵": "葉光亮、葉緣內凹，葉尖向外尖凸，色濃綠。花小型不明顯，果熟成後轉艷紅色具觀賞性；分枝性佳，耐修剪，可作造型", "用途": "中度耐蔭，用於一般庭院栽培，亦可修整成綠籬或整形樹"}}, {"name": "翠米茶（濱柃木）", "fields": {"科別/生活型": "山茶科", "原產地": "中、日、韓，台灣全島皆見分布", "特徵": "葉小型、革質、密生，花不明顯，果熟後呈黑紫色，耐強風、鹽、鹼、乾旱等環境；植株具層次性，形態優美", "用途": "一般庭院栽培；適合種植於面風、濱海環境，亦適合林下環境種植", "生態": "果熟成後可誘引鳥類啄食"}}, {"name": "胡椒木", "fields": {"科別/生活型": "芸香科", "原產地": "日本、韓國", "特徵": "葉小型、羽狀複葉，葉表油亮，葉內有油胞構造，具特殊胡椒香氣，有用於日本料理", "用途": "喜陽性環境，一般庭院栽培、盆栽、綠籬"}}, {"name": "醉嬌花", "fields": {"科別/生活型": "茜草科，常綠大灌木或小喬木", "原產地": "南美波利維亞、巴拉圭及西印度群島", "特徵": "花色橙至艷紅色，開花期長，適合庭園增添色彩；分枝性佳，但枝條柔軟，可修剪成叢狀，但較不易做造型", "用途": "喜陽性環境，一般庭院栽培、灌叢、叢狀綠籬", "生態": "具良好蜜源效果"}}, {"name": "金葉黃槐（金邊黃槐）", "fields": {"科別/生活型": "豆科蘇木亞科常綠灌木", "原產地": "熱帶美洲", "特徵": "枝細軟、略匍匐性，羽狀複葉、葉緣具金黃色邊框；花頂生，花金黃色", "用途": "喜陽性環境，一般庭院、叢植或綠籬", "生態": "花具蜜源、葉供粉蝶科幼蟲食草"}}, {"name": "咖啡樹", "fields": {"科別/生活型": "茜草科", "原產地": "熱帶非洲", "特徵": "大型灌木或小喬木，葉油亮具光澤；花白色，略具清香味道，果成熟由綠轉紅，內含2粒種子，可加工成咖啡，為重要的經濟作物；形態優美特殊，具觀賞效果，亦為常見的景觀植栽", "用途": "具中度耐蔭性，一般庭院栽培（宜林下栽種）", "生態": "果可誘引鳥類、哺乳類，果熟成後採收處理成咖啡豆"}}, {"name": "華八仙", "fields": {"科別/生活型": "虎耳草科（or 八仙花科）", "原產地": "華南、琉球、台灣", "特徵": "常綠灌木，葉狹長，莖柔弱多分枝，花色為黃綠色，外被4枚圓形白色的瓣狀萼片，花期春季；耐蔭性佳，通常分布於樹冠下層林帶邊緣等遮蔭環境", "用途": "一般庭院栽培、林下生態地營造", "生態": "花為林下理想之蜜源"}}, {"name": "馬茶花", "fields": {"科別/生活型": "夾竹桃科", "原產地": "印度、緬甸、馬來西亞（外來種）", "特徵": "葉對生、葉表光滑，花頂生或腋出，花色白，具淡清香味；全株具毒性。花期春、夏", "用途": "適陽性至中度遮蔭，一般庭院景觀栽培"}}, {"name": "千年木", "fields": {"科別/生活型": "龍舌蘭科常綠灌木至小喬木", "原產地": "馬達加斯加", "特徵": "莖幹圓直、具肉質構造，葉細長、輪狀互生，簇集生於莖枝頂端叢生；通常生長較為緩慢，耐旱、抗風性具佳；亦耐強日照", "用途": "中度耐蔭，適宜種於林冠或牆角邊緣，一般庭院、盆栽"}}, {"name": "立鶴花", "fields": {"科別/生活型": "爵床科", "原產地": "西非、印度", "特徵": "分枝多、枝條細、易下垂，花筒狀單生腋出，色紫白，台灣地區四季都開花，但以夏秋季較盛開；喜陽性環境，遮蔭環境表現較差", "用途": "一般庭院、盆栽，亦有修剪成綠籬"}}, {"name": "春不老", "fields": {"科別/生活型": "紫金牛科", "原產地": "海南、中南半島、斯里蘭卡、菲律賓，台灣地區自然分布於綠島、蘭嶼", "特徵": "葉肉質，新芽新葉略帶紅色，耐修剪；花小型；果熟成由綠轉紅至紫黑色。耐風、耐蔭、耐貧瘠，適合各式環境栽種", "用途": "一般庭院、綠籬；適半蔭性環境栽植", "生態": "果熟成後具良好誘鳥機能", "繁殖方法": "播種、扦插"}}, {"name": "番茉莉", "fields": {"科別/生活型": "茄科，常綠灌木", "原產地": "巴西、委內瑞拉", "特徵": "花萼筒狀，初開時藍紫色，後轉為白色，具清淡香氣。花期春、夏季。植株具毒性", "用途": "一般庭院栽植、綠籬、盆栽"}}, {"name": "白水木", "fields": {"科別/生活型": "紫草科", "原產地": "熱帶亞洲、馬達加斯加、馬來西亞、熱帶澳洲及太平洋諸島；台灣自然分布於恆春半島、蘭嶼、小琉球及綠島", "特徵": "常綠性的灌木或小喬木，樹皮灰褐色，葉簇集在枝端，葉片、花序都被有銀白色的絨毛。海岸第一線分布的植物，對不良環境適應性極佳", "用途": "廣泛用於一般庭院栽培、盆栽，或濱海綠化栽植", "生態": "花具蜜源效果，海岸生態布置適合樹種"}}, {"name": "藍雪花", "fields": {"科別/生活型": "藍雪科", "原產地": "南非", "特徵": "枝條伸長呈半蔓性，易下垂；花序頂生，淺藍或淡紫色，花期幾乎全年開放，以夏季及冬季尤盛", "用途": "一般庭院、綠籬，灌叢", "繁殖方法": "扦插"}}, {"name": "燈稱花", "fields": {"科別/生活型": "冬青科，落葉灌木", "原產地": "中國、菲律賓、台灣", "特徵": "落葉灌木，枝幹平滑，上佈淺色斑點。花小型白色，花梗纖細。果熟成後呈紫黑色。分布極廣，自平地至中海拔林下、林地邊緣、甚至開闊地皆常可見", "用途": "全日照至半遮蔭環境皆可適應，喜分布在林緣交界或林下空間。形態優美，適一般庭園景觀種植", "生態": "果具引誘山鳥的功效", "繁殖方法": "實生"}}, {"name": "香冠柏（金冠柏）", "fields": {"科別/生活型": "柏科常綠灌木至小喬木", "原產地": "中國、印度、日本（外來種）", "特徵": "常綠灌木或小喬木，主幹明顯細直，分枝性強，小枝環繞密生。針葉細密、具特殊檸檬芳香。樹形尖錐，樹姿優美，為極佳的景觀樹種", "用途": "喜陽性日照強、冷涼之環境，適用於一般庭園栽培"}}, {"name": "含笑花", "fields": {"科別/生活型": "木蘭科常綠灌木或小喬木", "原產地": "中國（華南地區）", "特徵": "葉革質，花淡黃色，花期長，具濃郁芳香，為常見的香花植物", "用途": "一般庭院栽培、盆栽", "生態": "葉為青帶鳳蝶類幼蟲食草"}}, {"name": "西印度櫻桃", "fields": {"科別/生活型": "黃褥花科（或稱「金虎尾科」），常綠灌木", "原產地": "熱帶美洲，西印度群島及加勒比海地區", "特徵": "常綠灌木，花粉紅色或粉白色，果熟成轉鮮紅色，為熱帶地區常見果樹。分枝性佳，可輕度修剪", "用途": "喜溫暖、日照充足環境，適一般庭院栽植。單株、綠籬、灌叢"}}, {"name": "狀元紅（台東火刺木）", "fields": {"科別/生活型": "薔薇科，常綠灌木，為台灣的特有種植物", "原產地": "原生於花東縱谷及花蓮縣秀林鄉和平村之河床及河流兩岸", "特徵": "常綠灌木，側枝短，先端成刺狀，枝條柔弱，呈半匍匐態，葉面呈光澤綠色，花小型、密生，果成熟由綠轉紅，掛樹期長，具觀賞效果", "用途": "喜日照充足環境、耐貧瘠土壤，適一般庭院種植。綠籬或整形栽植", "生態": "花蜜源發達、果具誘鳥機能"}}, {"name": "台灣山桂花", "fields": {"科別/生活型": "紫金牛科", "原產地": "華南、越南、日本，台灣全島", "特徵": "常綠灌木，葉紙質、疏鋸齒緣。冬季開白色小花，密集排列，乍看似桂花", "用途": "喜半遮蔭環境，多分布於林下及林緣，適一般庭院栽培"}}, {"name": "青紫木（紫背桂）", "fields": {"科別/生活型": "大戟科，常綠灌木", "原產地": "華南、越南", "特徵": "常綠灌木，喜溫暖環境，耐半蔭。耐修剪，可輕度整形", "用途": "一般庭院栽培、綠籬、灌叢"}}, {"name": "桃金孃", "fields": {"科別/生活型": "桃金孃科，常綠灌木", "原產地": "華南、台灣", "特徵": "葉革質，面光澤，下方被毛。花桃紅或粉紅，漿果熟成呈紫色，可食。分枝性佳，可修剪成叢狀", "用途": "性耐旱、喜溫暖、全日照環境，適一般庭院、綠籬、叢植", "生態": "果具誘引鳥類、哺乳類取食"}}, {"name": "紅彩木（紅花檵木）", "fields": {"科別/生活型": "金縷梅科", "原產地": "中國、印度（紅葉種為栽培變種；按葉色可分為嫩葉紅、透骨紅、雙面紅3類栽培種）", "特徵": "特徵與原變種相似，但葉為暗紅色，花為粉紅色至紫紅色，分枝性佳，耐修剪，可修剪成球形及其他造型，對不良環境耐受力一般，不具特殊表現", "用途": "適一般庭院栽培，適於布置植被色塊、製作盆景"}}, {"name": "八角金盤", "fields": {"科別/生活型": "五加科，常綠灌木或小喬木", "原產地": "日本（外來種）", "特徵": "葉大型、掌狀，有光澤", "用途": "耐蔭性尚可，適林緣或林下栽植，亦可盆栽供室內觀賞。另有斑葉栽培種", "繁殖方法": "播種、扦插"}}, {"name": "九節木", "fields": {"科別/生活型": "茜草科", "原產地": "華南、越南、日本、琉球、台灣", "特徵": "葉叢生於枝梢，略帶革質，果實成熟後呈紅色", "用途": "喜溫暖潮濕環境，耐陰性極強，適林下栽植", "生態": "果具誘鳥功能", "繁殖方法": "實生"}}, {"name": "野牡丹藤", "fields": {"科別/生活型": "野牡丹科", "原產地": "台灣", "特徵": "常綠灌木，莖略具蔓性特徵，葉輪生或對生。花頂生，成串聚集，花色粉綠或粉紅。花果期長，具觀賞功能", "用途": "一般庭院栽培、盆栽，亦有栽培做切花花材"}}, {"name": "火筒樹", "fields": {"科別/生活型": "火筒樹科，常綠灌木至小喬木", "原產地": "華南、菲律賓、台灣；分布河谷、溪邊及疏林中", "特徵": "生長快速、喜溫暖環境，具有支柱根，花粉紅色，果實熟成由紅轉墨綠色", "用途": "適一般庭院栽培", "生態": "理想的蜜源、食草植物"}}, {"name": "大頭茶", "fields": {"科別/生活型": "山茶科，常綠灌木或小喬木", "原產地": "中國、印度、台灣", "特徵": "葉長橢圓、革質，花色白，果具翅膜可隨風傳播", "用途": "耐風、耐旱及耐污染，適一般庭院栽植"}}]}, {"name": "草本", "items": [{"name": "蜘蛛百合", "fields": {"科別/生活型": "石蒜科", "原產地": "西印度群島", "特徵": "常綠球根草本，地下莖為粗大球形鱗莖，花莖自鱗莖中心抽出，花色白，筒狀花末梢五裂。植株具毒性；暖季開花（夏季）", "用途": "適應性佳，又耐遮蔭環境，一般庭院栽培"}}, {"name": "文殊蘭", "fields": {"科別/生活型": "石蒜科", "原產地": "華南、琉球、台灣（原產為白色）；印尼蘇門答臘（原產為紅色）", "特徵": "常綠球根草本，地下莖為粗大球形鱗莖，花莖自鱗莖中心抽出，花色白，筒狀花末梢五裂。耐風、耐旱，對鹽鹼地適應性佳。植株具毒性", "用途": "適濱海環境，一般庭院栽植或盆栽", "繁殖方法": "分株、播種"}}, {"name": "麥門冬", "fields": {"科別/生活型": "百合科", "原產地": "中國、日本、韓國、越南、印度、台灣", "特徵": "多年生常綠草本，莖短，葉簇生，地下部有許多走莖及紡錘根構成的貯存構造，花淡紫色，果熟成時由綠轉紅", "用途": "喜陽性至半日照環境，多分布於林緣或林下，適一般庭院", "繁殖方法": "分株法、實生法"}}, {"name": "斑葉沿階草", "fields": {"科別/生活型": "百合科（為沿階草的斑葉栽培種）", "原產地": "中國大陸、韓國、日本、越南、印度", "特徵": "莖短促，葉自莖上簇生，具地下走莖，可向外萌生新芽體。根常膨大成肉質塊根狀，以貯藏水養分", "用途": "庭園景觀栽培", "繁殖方法": "分株、播種"}}, {"name": "冇骨消", "fields": {"科別/生活型": "忍冬科（多年生草本至亞灌木態）", "原產地": "中國、台灣", "特徵": "多年生常綠或半冬枯草本植物，莖直立中空，花繖型頂生，量多蜜豐，果成熟為鮮紅色。花期夏季", "用途": "全日照至半遮蔭環境皆可適應，一般用於生態布置", "生態": "重要之蜜源植物，果具引誘小鳥機能"}}, {"name": "馬蘭", "fields": {"科別/生活型": "菊科，宿根性草本（多年生）", "原產地": "中國、印度、印尼、日本、臺灣（原生草本）", "特徵": "莖直立。頭狀花序，頂生，舌狀花為淺紫色，喜日照良好、土壤濕潤環境", "用途": "適一般庭院景觀栽植", "生態": "蜜源植物；嫩葉可供野菜佐食", "備註": "照片集頁標籤作「馬蘭菊」，文字說明頁標題為「馬蘭」"}}, {"name": "白紋草", "fields": {"科別/生活型": "百合科", "原產地": "熱帶非洲", "特徵": "植株叢生成簇，具發達塊根，呈紡錘形；葉自極短的莖部兩列緊密互生，無走莖或子株", "用途": "具貯藏根，適應性佳，一般庭園栽培或盆栽", "繁殖方法": "分株"}}, {"name": "吊蘭", "fields": {"科別/生活型": "百合科", "原產地": "南非（外來種）", "特徵": "植株成簇，具膨大氣根態貯藏根；葉自極短的球狀莖部兩列緊密互生，走莖構造纖細，節點開花及分生子株", "用途": "具貯藏根，適應性佳，一般庭園栽培或盆栽（吊盆）、地被", "繁殖方法": "分株、走莖芽"}}, {"name": "紫錦草", "fields": {"科別/生活型": "鴨跖草科", "原產地": "墨西哥", "特徵": "多年生草本，全年具觀葉效果，但陽光不足時，葉色呈較灰暗。生性強健，耐旱性佳，長期缺水亦能發芽", "用途": "一般地被、花台、盆栽", "生態": "環境條件較差的處所（屋頂薄層）之綠化布置"}}, {"name": "蓬萊蕉（電信蘭）", "fields": {"科別/生活型": "天南星科", "原產地": "墨西哥、瓜地馬拉（外來種）", "特徵": "常綠攀緣觀葉植物，莖幹膨大，脫落後留有明顯葉痕，葉大型深裂，老葉中央會生成窗孔（孔洞）", "用途": "適稍微遮蔭的環境，一般庭院、盆栽", "繁殖方法": "扦插或實生"}}, {"name": "合果芋", "fields": {"科別/生活型": "天南星科", "原產地": "墨西哥、巴拿馬、熱帶美洲（外來種）", "特徵": "多年生常綠草本，具多種園藝變異品種。佛焰花序，苞片成淡綠或淡黃，花期約春夏季", "用途": "喜陰暗略為潮濕環境，一般庭院栽培、盆栽、花台", "繁殖方法": "扦插法"}}, {"name": "紫嬌花", "fields": {"科別/生活型": "石蒜科（植株具毒性）", "原產地": "南非", "特徵": "多年生常綠球根植物，葉狹長狀似韭菜，花紫色、花期長，於夏秋暖季盛花，喜溫暖、乾燥日照良好的環境，冬季植株生長停滯", "用途": "適一般庭院、花壇栽植", "繁殖方法": "分株、播種"}}, {"name": "馬利筋", "fields": {"科別/生活型": "蘿藦科，多年生草本", "原產地": "熱帶美洲地區（外來種）", "特徵": "莖半木質化，葉對生、長橢圓狀披針狀，花黃or紅色。蓇葖果鶴嘴形，種子有白色纖毛附著，便於飛行散佈，全株含白色乳汁（有毒植物）。喜陽性溫暖環境", "用途": "一般庭院栽培、生態復育環境規劃利用", "生態": "花為蝶類昆蟲喜愛之蜜源，葉供樺斑蝶幼蟲食草", "繁殖方法": "實生或扦插"}}, {"name": "小蚌蘭", "fields": {"科別/生活型": "鴨跖草科", "原產地": "園藝栽培種（蚌蘭原產於西印度群島、墨西哥、瓜地馬拉）", "特徵": "葉小、密生，葉背成紅紫色，葉簇生密集，不易開花。生性強健，耐旱性強，適輕度遮蔭環境", "用途": "適一般庭院，屋頂、栽植槽、花壇", "繁殖方法": "分株法"}}, {"name": "蜘蛛抱蛋", "fields": {"科別/生活型": "百合科", "原產地": "中國、日本、喜馬拉雅山地區（外來種）", "特徵": "根狀莖匍匐於地表或淺層土壤，地上無明顯的莖部，葉、花皆自根狀莖節處抽出，花近地生，花被八枚，似蜘蛛背負卵囊狀而得名。喜陰暗至半陰暗環境", "用途": "適一般庭院地被、盆栽"}}, {"name": "射干", "fields": {"科別/生活型": "鳶尾科，多年生宿根草本", "原產地": "中國、印度、日本、韓國、琉球、蘇聯（外來種）", "特徵": "根狀莖呈結節狀、橫走，地上莖直立；葉扁平。花橘黃色，佈暗紅色斑點，花期近秋冬季。蒴果開裂後露出黑色種子。適應性佳，喜溫暖、陽光充足的環境", "用途": "適一般庭院及花壇栽培", "生態": "蜜源植物"}}, {"name": "帝王蔓綠絨", "fields": {"科別/生活型": "天南星科", "原產地": "園藝雜交種（原生種分布在熱帶至亞熱帶美洲地區）", "特徵": "葉大型，生長較其他蔓綠絨類直立（可做直立植株栽培），莖具氣根，生長速度緩慢，略具攀緣特性，性喜陰暗至半陰暗環境", "用途": "適一般庭院栽植、盆栽"}}, {"name": "孔雀竹芋", "fields": {"科別/生活型": "竹芋科（或葛鬱金科）", "原產地": "熱帶美洲及印度洋島域", "特徵": "多年生常綠草本，具根莖構造，葉銀白色底，從中脈放射出綠色斑條，葉背有同樣形狀的褐紅色斑。喜高溫、濕潤環境，冬季葉色轉暗淡，葉片捲縮", "用途": "適一般庭院、盆栽", "繁殖方法": "分株"}}, {"name": "法國秋海棠", "fields": {"科別/生活型": "秋海棠科", "原產地": "巴西（外來種）", "特徵": "葉略呈長三角形或歪心臟形，葉緣有波狀鋸齒。葉面銅綠，芯葉及葉背呈紅褐色，花色紅艷怡人，花期長、適應性佳，極具景觀效益。喜溫暖、日照充足環境", "用途": "適一般庭院景觀栽植", "繁殖方法": "扦插法"}}, {"name": "山月桃", "fields": {"科別/生活型": "薑科", "原產地": "菲律賓、日本、琉球；台灣分布於全島中低海拔林下", "特徵": "多年生草本，地下莖匍匐蔓生，狀似薑。植株低矮，葉廣披針形，葉表光滑油亮，具短葉柄，由葉鞘包覆成假莖，自莖基抽出；花小型，果小球形，熟成時轉橙紅色，皆具觀賞效益。喜陰暗至半陰暗環境，耐風性佳", "用途": "適一般庭院或林下布置（地被）"}}, {"name": "閉鞘薑", "fields": {"科別/生活型": "薑科，宿根性草本", "原產地": "華南、亞洲熱帶地區、台灣", "特徵": "莖存在二種型態：地下有塊狀根莖；地上草質莖自地下根莖抽出，葉片螺旋狀排列；花頂生，苞片紅或綠色。喜生長林蔭下，受到日照的時間短，葉子便發展出螺旋梯一般，以增加葉面光照面積", "用途": "適一般庭院栽植（地被）", "繁殖方法": "分根法（分切根莖）、地上莖扦插法"}}, {"name": "繁星花", "fields": {"科別/生活型": "茜草科", "原產地": "熱帶非洲、馬達加斯加、阿拉伯半島", "特徵": "一、二年生或多年生草本，全株被有細茸毛。花序呈聚散排列，小花筒狀，花冠五裂，具多種園藝品種。喜日照充足環境", "用途": "適一般庭院栽培、盆栽、花壇", "生態": "重要的蜜源植物，一般生態復育布置適用"}}, {"name": "翠蘆莉", "fields": {"科別/生活型": "爵床科，多年生草本", "原產地": "墨西哥", "特徵": "地下具根莖，水平橫向生長，芽向上長出地上莖，地上莖略呈方形；花以紫或淡紫色為多，亦有粉或白色，花期極長，幾乎全年可見開花。以全日照較佳，但半日照環境表現亦可，環境不拘，乾地或水域濕土適應性皆可。分高性及矮性二類", "用途": "適一般庭院、野地栽培", "生態": "蜜源植物", "繁殖方法": "扦插、播種"}}, {"name": "山蘇", "fields": {"科別/生活型": "鐵角蕨科，蕨類植物", "原產地": "分布地及廣，非洲至玻里尼西亞島嶼、澳洲、東南亞，台灣廣見於全島中低海拔林間、綠島、蘭嶼", "特徵": "莖短促而粗，葉自地下莖簇生，由中心向四方開展而成巢狀。根系綿密，附生於樹幹、岩牆或設施物上，可吸收空氣中水氣營生；對乾旱適性極佳", "用途": "適一般庭院、野地栽培（盆栽、附生、地被）", "生態": "嫩葉可供葉菜佐食", "繁殖方法": "孢子繁殖"}}, {"name": "花丁子", "fields": {"科別/生活型": "玄蔘科，多年生草本植物", "原產地": "墨西哥（外來種）", "特徵": "葉片小、心形，多數幾乎退化；莖呈細長密叢狀枝，容易伏倒下垂，宜栽培較高地勢，倒伏後成垂懸狀，花短筒狀，色艷紅，花期長，除冬季外皆能開花。喜日照良好環境，耐旱性佳", "用途": "適花壇、花台栽植、盆栽", "繁殖方法": "扦插、分株"}}, {"name": "蔥蘭", "fields": {"科別/生活型": "石蒜科，多年生常綠草本", "原產地": "墨西哥、南美洲", "特徵": "地下不膨大鱗莖，具貯藏功能，葉細圓如蔥葉，花頂生，花色白或黃色，花期長，夏至秋季開花。生性健壯、適應性佳，植株具毒性", "用途": "適花壇、盆栽。全株有毒", "生態": "蜜源、葉為石蒜天蛾幼蟲食草"}}, {"name": "玉簪", "fields": {"科別/生活型": "百合科，多年生宿根草本", "原產地": "中國、日本", "特徵": "地下有多數鬚狀根，具貯藏功能；莖短促，葉大型、簇生，多數品系有斑紋、具觀賞性；花白色，具清淡香氣。屬典型蔭性植物，喜陰濕環境，受強光照射葉片易黃化", "用途": "盆栽、地被、林下栽植", "繁殖方法": "分株或播種"}}, {"name": "小天堂鳥（黃麗鳥蕉）", "fields": {"科別/生活型": "旅人蕉科，多年生草本植物", "原產地": "巴西（外來種）", "特徵": "地下具粗壯肉質貯藏根；地下莖球型、短促，葉自短莖叢生抽生，地上部由葉鞘包被形成假莖。花莖自葉腋抽出，花色黃、橙或紅色。全日照或半日照環境皆可適應", "用途": "適一般庭院景觀栽植", "繁殖方法": "分株"}}]}, {"name": "地被", "items": [{"name": "馬鞍藤", "fields": {"科別/生活型": "旋花科，多年生匍匐性草本", "原產地": "廣佈全世界熱帶地區的濱海", "特徵": "莖蔓生，具捲鬚，每節生根，根深入砂土，屬典型砂原植物，為防風定砂植物。葉尖端凹裂，形似馬鞍。花筒狀、紫色，花期夏秋季，但花朵壽命極短（約半天時間即凋落）。對濱海砂原環境適性特佳", "用途": "濱海砂地、礫灘、石堆，甚至防波堤綠化栽植", "生態": "濱海砂原固砂防風植物", "繁殖方法": "播種、扦插"}}, {"name": "松葉景天", "fields": {"科別/生活型": "景天科，多年生多肉草本植物", "原產地": "墨西哥、北美洲、台灣北部", "特徵": "莖呈匍匐狀，局部直立，莖節容易生根。葉圓柱狀、肉質；花序頂生，花金黃色，花期早春。莖含水量多，表皮特化成角質具有防水分散失構造，耐旱性極佳", "用途": "一般庭院栽植、盆栽，尤其適合屋頂綠化、綠牆栽種，以及濱海地被等", "繁殖方法": "扦插"}}, {"name": "崗姫竹", "fields": {"科別/生活型": "禾本科竹亞科，多年生常綠地被", "原產地": "中國大陸、日本", "特徵": "為小型的竹類植物，稈中空，直立有節，根狀（地下）莖橫走，地上莖自節抽生，株高約1M，植株矮小密集，可形成理想植被。散生型竹類，具棲地擴張性；適全日照至半遮蔭環境", "用途": "適坡地、庭院地被栽種", "繁殖方法": "分株（分叢）"}}, {"name": "馬蹄金", "fields": {"科別/生活型": "旋花科，多年生匍匐性草本地被", "原產地": "中國、台灣（原生種）", "特徵": "莖細長匍匐，每節皆能生根；葉圓或腎形，花小型、鐘狀黃色。種子黃至褐色。適全日照至半遮蔭環境", "用途": "一般庭院地被栽植"}}, {"name": "聖奧古斯丁草（鈍葉草）", "fields": {"科別/生活型": "禾本科，多年生禾草地被", "原產地": "美國、熱帶美洲、牙買加、波多黎各", "特徵": "根莖匍匐，根系吃土較深，常用於坡地水土保持栽植，葉片鈍型，又名「鈍葉草」。匍匐性強，生長速度緩慢，耐鹽性佳，亦可栽植於濱海砂質地形", "用途": "一般庭院草坪栽植，山坡地水土保持應用；另有斑葉園藝栽培種"}}, {"name": "腎蕨", "fields": {"科別/生活型": "腎蕨科", "原產地": "廣泛分布全球熱帶至亞熱帶林地下層環境。台灣全島自平地至海拔2000M之山野皆見分布", "特徵": "屬附生或地生型態皆可適應。莖分為直立莖、匍匐莖及塊莖。一回羽狀複葉；台灣原生有二種腎蕨屬成員，另有多種引入種或園藝種", "用途": "林下地被、附生栽植（坡地或山壁上附生、綠牆植栽）"}}, {"name": "卷柏", "fields": {"科別/生活型": "卷柏科", "原產地": "廣泛分布全球熱帶、亞熱帶至暖溫帶之林下、山壁、潮濕環境；台灣有多種原生種類，都極適合用於環境綠化栽植", "特徵": "卷柏為原始的蕨類植物，尚未演化真正的葉子，以孢子繁殖個體。種類繁多，大多生長於遮蔭或半遮蔭較為濕潤的環境，其中部分耐旱力極強，在長期乾旱後只要根系再度遇水後就又可舒展", "用途": "一般庭院地被栽植、盆栽，林下或遮蔭環境植生覆蓋", "繁殖方法": "孢子繁殖，分株、扦插"}}, {"name": "巴西鳶尾", "fields": {"科別/生活型": "鳶尾科，多年生草本", "原產地": "墨西哥至巴西等拉丁美洲一帶（外來種）", "特徵": "葉片光滑，呈劍型，扇形排列；花朵大形，紫白相混。地下莖匍匐多節，葉及花梗皆自節處抽出。花梗扁平似葉狀，頂端開花，花朵謝後會自花梗尖端萌發新芽體，可用以繁殖新株。喜半日照至遮蔭環境", "用途": "一般用於庭院牆角或林下地被栽植", "生態": "蜜源植物"}}, {"name": "花葉絡石（初雪葛）", "fields": {"科別/生活型": "夾竹桃科", "原產地": "中國、台灣；花葉（斑葉）品種係日本培育選拔栽培之園藝種，廣泛應用於環境景觀布置", "特徵": "莖木質匍匐（藤本），植株具乳汁，莖具氣生根，橫走或攀附，新葉呈紅、粉、白相雜，極具觀賞性", "用途": "一般庭院地被栽植、盆栽", "繁殖方法": "扦插"}}, {"name": "白花三葉草", "fields": {"科別/生活型": "豆科蝶形花亞科，匍匐性多年生草本", "原產地": "北美洲（外來種）", "特徵": "莖匍匐橫走，偶有呈斜上昇狀莖。葉三出複葉，表面常有白色的斑塊，光滑無毛；花白色蝶狀，多數排列為頭狀花序。根部能與固氮根瘤菌共生，具改善土質功效。喜日照良好、涼爽、排水佳的環境", "用途": "適一般庭院地被栽植，亦有用作水土保持或牧草栽種者", "生態": "蜜源、牧草"}}, {"name": "紅毛莧", "fields": {"科別/生活型": "大戟科，多年生常綠匍匐狀草本植物", "原產地": "中美洲、西印度群島", "特徵": "莖纖細、成株枝條呈半蔓性匍匐或懸垂生長。葉紙質、有細毛。穗狀花序自莖端葉腋伸出，花小形紅色，聚成毛線狀，花期長，幾乎全年開花（尤以夏天開花為盛）。喜高溫、潮濕、陽光充足的環境", "用途": "庭園景觀栽植（地被）", "繁殖方法": "扦插"}}]}, {"name": "水生、濕地植物", "items": [{"name": "台灣菱（菱角）", "fields": {"科別/生活型": "菱科，浮葉型水生植物", "原產地": "中國", "特徵": "根固著於底泥，莖細柔，葉巨幅囊，可隨水漂浮，葉菱狀三角形，葉尖有鋸齒，葉柄膨大內呈海綿質，具助浮力；花單生，自葉腋抽生，開花後閉果沉入水中，外覆硬殼，即為可食用之菱角。適水域環境生長", "用途": "一般水池、生態池布置栽培", "生態": "生態池復育栽種，菱角田與水雉棲息關係密切"}}, {"name": "荷花", "fields": {"科別/生活型": "蓮科，大型挺水水生植物，多年生宿根草本", "原產地": "中南半島、印度、中國、日本、菲律賓、澳洲", "特徵": "地下莖（藕）橫向生長，自節點抽出葉及花梗；葉挺水而出，表面具細絨毛，附著力弱，水液無法附著其上。花色繁多，花期5-7月，花謝後花托膨大成蓮蓬，內容多粒蓮子。適水域環境生長", "用途": "一般庭院景觀水池、生態池布置栽培", "繁殖方法": "播種or分莖繁殖"}}, {"name": "睡蓮", "fields": {"科別/生活型": "睡蓮科，浮葉型水生植物，多年生水生草本", "原產地": "廣泛分布於北半球；熱帶至溫帶地區皆有", "特徵": "地下莖肉質，短促成塊狀，直立或橫走地底泥沼，呈山葵狀，沉於底泥；花、葉浮出水面上生長；花日間開放，夜間閉合，可以連續開閉三至五日。適水域環境生長", "用途": "一般庭院景觀水池、生態池布置栽培"}}, {"name": "水金英", "fields": {"科別/生活型": "黃花藺科", "原產地": "南美洲巴西、委內瑞拉等熱帶地區（外來種）", "特徵": "多年生水生草本，莖匍匐生長，沉於底泥；花、葉自節處抽生，浮出水面上生長；花金黃色、三瓣；適水域環境生長", "用途": "一般庭院景觀水池、生態池布置栽培", "繁殖方法": "分株"}}, {"name": "茭白", "fields": {"科別/生活型": "禾本科，一年生水生（宿根）禾草", "原產地": "東亞、西亞及北美洲", "特徵": "地下莖叢出，具芽點，可分蘖新芽，地上莖直立，基部經共生菰黑穗菌刺激而生成筍狀莖（菌癭），可供食用。適水域環境生長", "用途": "一般庭院景觀水池、生態池布置栽培、經濟栽培採摘茭白筍；植株具淨化水質功能"}}, {"name": "香蒲（水蠟燭）", "fields": {"科別/生活型": "香蒲科，多年生水生宿根草本", "原產地": "中國大陸、日本、台灣", "特徵": "地下根莖匍匐泥中，白色、具鬚根；地上部由葉鞘及花柄包覆成假莖，圓柱形；葉狹長劍狀；花兩性，開於柄頂，上端為雄花、下端為雌花，花期在夏季。適水域環境生長", "用途": "一般庭院景觀水池、生態池布置栽培"}}, {"name": "海芋", "fields": {"科別/生活型": "天南星科，多年生球根花卉", "原產地": "南非（外來種）", "特徵": "地下塊莖膨大具貯藏功能，葉及花柄自節點抽生，包被成偽莖；佛焰苞頂生，花期冬、春兩季（但以3-5月為盛）。喜日照充足、溫暖至冷涼之潮濕環境，不耐熱也不耐寒，適水域環境生長", "用途": "一般庭院景觀水池栽培、經濟栽培做切花用途"}}, {"name": "台灣萍蓬草", "fields": {"科別/生活型": "睡蓮科，多年生浮葉性水生草本植物", "原產地": "台灣（特有種）", "特徵": "地下有厚實的黃色塊莖。葉柄及花梗自節點抽生，葉長橢圓或闊卵形，浮於水面，邊緣有缺刻深裂；花梗粗長、挺水，花冠杯形，花瓣退化，萼片黃色，中央花器成艷紅色。適水域環境生長", "用途": "一般庭院景觀水池、生態池復育栽培", "生態": "台灣特有種植物，全球萍蓬草屬自然分布的最南界種類"}}, {"name": "風箱樹", "fields": {"科別/生活型": "茜草科，落葉性灌木或小喬木", "原產地": "中國、印度、緬甸、北美、台灣（分布於北部、東北部平地溝渠）", "特徵": "頭狀花序腋生或頂生，具濃郁香味；花期夏季。喜水域或多濕環境", "用途": "可栽植於一般庭院景觀水池或生態池，早期先民種植於水岸或圳岸作為防止沖蝕的護岸天然材料", "生態": "功能極強的蜜源植物", "繁殖方法": "扦插"}}, {"name": "斑葉蘆葦", "fields": {"科別/生活型": "禾本科，多年生宿根禾草，為蘆葦的斑葉變種", "原產地": "全球亞熱帶至溫帶地區", "特徵": "地下莖叢出，根部粗而多結，有節具芽點，可分蘖新芽，地上莖（桿）直立；葉互生，具白色條紋；穗狀花序頂生，形似掃帚。適水域環境生長", "用途": "一般庭院景觀水池、生態池布置栽培", "繁殖方法": "扦插、分株"}}, {"name": "薏苡", "fields": {"科別/生活型": "禾本科，多年生宿根性草本", "原產地": "越南、泰國、印度及緬甸等東南亞一帶", "特徵": "莖桿單一直立，基部可分蘗成叢。花序直立或下垂，腋生，穎果成熟時，總苞（外殼）堅硬光滑，內覆種仁即為常食用之薏米。適應力佳，喜日照良好之水域濕地、潤土，但旱地生長適應亦可", "用途": "適一般庭院濕地環境栽植", "繁殖方法": "播種、扦插"}}, {"name": "水生鳶尾", "fields": {"科別/生活型": "鳶尾科，多年生宿根性草本植物", "原產地": "泛指鳶尾屬水生花卉，非單一種類，亦有多種雜交種及園藝栽培種", "特徵": "具肉質狀球莖構造，葉及花柄自基部節點密集抽生；花頂生，花色繁多，有紫、紅、粉、黃、藍、白等，花形大，極具觀賞機能，花期春至夏季。喜日照良好之水域環境", "用途": "適一般庭院景觀水池栽植", "繁殖方法": "利用根莖繁殖"}}]}, {"name": "蔓藤植物", "items": [{"name": "紫藤", "fields": {"科別/生活型": "豆科蝶形花亞科，落葉木質藤蔓", "原產地": "中國大陸", "特徵": "木質化莖具纏繞性，可攀援其他植株或設施向上攀生；葉為一回羽狀複葉，冬季低溫期會落葉；花穗（總狀花序）大而懸垂，花色紫或淡紫，果實為莢果。喜日照良好環境", "用途": "適一般庭院景觀栽植，生長迅速，需攀爬架", "繁殖方法": "常用扦插、壓條、嫁接或播種"}}, {"name": "多花素馨", "fields": {"科別/生活型": "木犀科，常綠木質藤蔓", "原產地": "中國大陸、越南、印度（外來種）", "特徵": "木質化莖具纏繞性，葉互生一回羽狀；花穗懸垂，色白，具濃郁芳香。喜涼爽、日照良好環境", "用途": "適一般庭院景觀栽植，需攀爬架", "繁殖方法": "扦插或壓條"}}, {"name": "越橘葉蔓榕", "fields": {"科別/生活型": "桑科", "原產地": "中國大陸、臺灣", "特徵": "多年生常綠木質蔓性，莖匍匐生長，每節都容易長出不定根，但不具攀爬特性；葉小型，隱頭花序（果），生性強健。環境耐受能力佳，喜日照良好的環境", "用途": "適一般庭院地被栽植", "繁殖方法": "扦插"}}, {"name": "金盃藤", "fields": {"科別/生活型": "茄科，常綠木質蔓藤", "原產地": "中美洲（外來種）", "特徵": "莖柔弱，依附攀爬；葉大型、長橢圓形；單頂花序，花大型筒狀、黃色間雜紅褐色線條，具清淡香氣。喜涼爽、日照充足環境。植株具毒性", "用途": "適一般庭院棚架栽植", "繁殖方法": "扦插或高壓法"}}, {"name": "木玫瑰", "fields": {"科別/生活型": "旋花科，多年生常綠蔓藤", "原產地": "熱帶美洲（外來種）", "特徵": "莖草質纏繞攀爬；葉掌狀開裂；花大、筒狀、色黃；蒴果成熟後萼片不規則開裂呈木質化，狀似乾燥的玫瑰花。喜溫暖、日照充足環境", "用途": "適一般庭院棚架栽植", "繁殖方法": "播種或莖條扦插"}}, {"name": "蔦蘿", "fields": {"科別/生活型": "旋花科，一年生草本蔓藤", "原產地": "墨西哥、熱帶美洲（外來種）", "特徵": "莖草質纏繞攀爬；葉羽狀絲裂，花小型、長筒狀、色紅or白，蒴果成熟乾裂後內容數枚種子。花期夏至秋", "用途": "喜溫暖、日照充足環境，適一般庭院棚架栽植", "繁殖方法": "實生法"}}, {"name": "軟枝黃蟬", "fields": {"科別/生活型": "夾竹桃科，常綠木本蔓藤", "原產地": "巴西、熱帶美洲（外來種）", "特徵": "莖木質依附攀援；葉3-4枚輪生；莖葉皆富含乳汁，花大型、筒狀、金黃色。全株有毒。喜溫暖、日照充足環境", "用途": "適一般庭院棚架、牆垣栽植", "繁殖方法": "扦插、壓條"}}, {"name": "常春藤", "fields": {"科別/生活型": "五加科，多年生草本蔓藤", "原產地": "歐洲、亞洲和北非（台灣有野生自然分布品種）", "特徵": "莖草質，莖節間易生氣根，具吸附性，可攀爬，葉掌狀或掌裂，多數園藝應用種具斑紋。喜涼爽、半日照或局部遮蔭環境", "用途": "適一般庭院栽植、懸垂吊盆", "繁殖方法": "扦插"}}, {"name": "黃金葛", "fields": {"科別/生活型": "天南星科，多年生草本蔓藤", "原產地": "廣泛分布於熱帶及亞熱帶地區林下、樹幹或潮濕岩壁", "特徵": "莖草質，莖節間易生氣根，具吸附性，可攀爬；葉盾狀，葉脈間常間雜白色斑紋，向上攀爬時葉子面積會越長越大，並產生窗孔構造，反之向下懸垂則葉子漸小。喜暖濕、半日照或局部遮蔭環境", "用途": "適一般庭院林下栽植、懸垂吊盆或立柱栽植", "繁殖方法": "扦插"}}, {"name": "懸星花", "fields": {"科別/生活型": "茄科，多年生草本蔓藤", "原產地": "巴西、熱帶美洲、佛羅里達南部", "特徵": "多年生蔓藤，莖草質，具半纏繞、半依附性，能攀援，葉羽狀開裂；圓錐狀花序頂生下垂，具數朵小花、色淡紫；果實成熟由綠轉紅，掛樹時間久，具觀賞性。喜暖濕、日照充足之環境。植株具毒性", "用途": "適一般庭院棚架栽植", "繁殖方法": "實生法"}}, {"name": "三星果藤", "fields": {"科別/生活型": "黃褥花科，常綠木本蔓藤", "原產地": "菲、馬、太平洋諸島。台灣自然分布於恆春、蘭嶼海邊", "特徵": "莖木質，具半纏繞、半依附性，能攀爬，單葉對生、表面光滑，花序頂生，小花五瓣、黃色；翅果呈星芒狀，三枚相互背靠。花期春至夏季。喜暖濕、日照充足之環境", "用途": "適一般庭院棚架栽植", "繁殖方法": "扦插"}}, {"name": "爬森藤", "fields": {"科別/生活型": "夾竹桃科，多年生草本蔓藤", "原產地": "華南、熱帶亞洲、台灣（自然分布於恆春半島與北海岸）", "特徵": "莖草質，具纏繞攀爬性，單葉對生；花序頂生，花小型；蓇葖長橢圓形，種子有翅毛，能隨風播散。喜暖濕、日照充足之環境。全株有毒", "用途": "一般庭院棚架、牆垣栽植", "生態": "蜜源、葉為大白斑蝶幼蟲食草", "繁殖方法": "播種、扦插"}}]}]}}</script>
+<script>
+(function(){
+  "use strict";
+  var DATA = JSON.parse(document.getElementById('app-data').textContent);
+  var state = {
+    mode: 'plants',          // materials | plants | quiz
+    plantCat: DATA.plants.subcats[0].name,
+    materialCat: DATA.materials.subcats[0].name,
+    search: '',
+    quiz: { phase:'settings', catSel:null, total:10, idx:0, score:0, questions:[], answered:false, review:[] }
+  };
+
+  var root = document.getElementById('root');
+  var tabsEl = document.getElementById('tabs');
+
+  function esc(s){
+    return String(s==null?'':s).replace(/[&<>"']/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+  function shuffle(arr){
+    var a = arr.slice();
+    for (var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; }
+    return a;
+  }
+  function sample(arr,n){ return shuffle(arr).slice(0,n); }
+  function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+
+  /* ---------------- flatten pools ---------------- */
+  var plantPool = [];
+  DATA.plants.subcats.forEach(function(sub){
+    sub.items.forEach(function(it){ plantPool.push({name:it.name, cat:sub.name, fields:it.fields}); });
+  });
+  var materialPool = [];
+  DATA.materials.subcats.forEach(function(sub){
+    sub.items.forEach(function(it){ materialPool.push({name:it.name, cat:sub.name, desc:it.desc}); });
+  });
+  var plantCatNames = DATA.plants.subcats.map(function(s){return s.name;});
+  var materialCatNames = DATA.materials.subcats.map(function(s){return s.name;});
+
+  /* quiz scope categories: the 8 plant categories kept separate, all materials combined into one */
+  var QUIZ_CATS = plantCatNames.map(function(name){
+    return {id:'p:'+name, type:'plant', match:name, label:name+'類', count: plantPool.filter(function(p){return p.cat===name;}).length};
+  }).concat([
+    {id:'m:all', type:'material', match:null, label:'其他栽培介質及資材類', count: materialPool.length}
+  ]);
+  state.quiz.catSel = {};
+  QUIZ_CATS.forEach(function(c){ state.quiz.catSel[c.id] = true; });
+
+  /* ================= RENDER: TABS ================= */
+  function renderTabs(){
+    var tabs = [
+      {id:'plants', label:'識別參考植物', count:plantPool.length},
+      {id:'materials', label:'識別資材', count:materialPool.length},
+      {id:'quiz', label:'隨機測驗', count:null}
+    ];
+    tabsEl.innerHTML = tabs.map(function(t){
+      return '<button class="tab" data-mode="'+t.id+'" data-active="'+(state.mode===t.id)+'" onclick="APP.setMode(\''+t.id+'\')">'+
+        esc(t.label) + (t.count!=null ? ' <span class="count">'+t.count+'</span>' : '') +
+      '</button>';
+    }).join('');
+  }
+
+  /* ================= RENDER: BROWSE ================= */
+  function renderBrowse(kind){
+    var isP = kind==='plants';
+    var pool = isP ? DATA.plants.subcats : DATA.materials.subcats;
+    var activeCat = isP ? state.plantCat : state.materialCat;
+    var activeSub = pool.filter(function(s){return s.name===activeCat;})[0] || pool[0];
+    var q = state.search.trim().toLowerCase();
+
+    var items = activeSub.items;
+    if (q){
+      items = activeSub.items.filter(function(it){
+        var hay = it.name.toLowerCase();
+        if (isP){ hay += ' ' + Object.values(it.fields).join(' ').toLowerCase(); }
+        else { hay += ' ' + it.desc.join(' ').toLowerCase(); }
+        return hay.indexOf(q) !== -1;
+      });
+    }
+
+    var rail = pool.map(function(s){
+      return '<li><button class="rail-btn" data-active="'+(s.name===activeSub.name)+'" onclick="APP.setCat(\''+kind+'\',\''+esc(s.name).replace(/'/g,"\\'")+'\')">'+
+        '<span>'+esc(s.name)+'</span><span class="n">'+s.items.length+'</span></button></li>';
+    }).join('');
+
+    var cards = items.map(function(it, i){
+      var teaser = isP ? (it.fields['特徵'] || it.fields['科別/生活型'] || it.fields['原產地'] || '') : (it.desc[0]||'');
+      var chip = isP ? activeSub.name : activeSub.name;
+      var origIdx = activeSub.items.indexOf(it);
+      return '<button class="item-card" onclick="APP.openDetail(\''+kind+'\',\''+esc(activeSub.name).replace(/'/g,"\\'")+'\','+origIdx+')">'+
+        '<span class="chip">'+esc(chip)+'</span>'+
+        '<span class="name">'+esc(it.name)+'</span>'+
+        '<span class="teaser">'+esc(teaser)+'</span>'+
+      '</button>';
+    }).join('');
+
+    return (
+      '<div class="browse" data-mode="'+kind+'">' +
+        '<div class="rail">' +
+          '<div class="rail-title">分類</div>' +
+          '<ul class="rail-list">'+rail+'</ul>' +
+        '</div>' +
+        '<div>' +
+          '<div class="panel-head">' +
+            '<h2>'+esc(activeSub.name)+' <span style="color:var(--text-muted);font-weight:400;font-size:14px;">（'+activeSub.items.length+' 項）</span></h2>' +
+            '<label class="search"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>' +
+            '<input placeholder="搜尋名稱或內容…" value="'+esc(state.search)+'" oninput="APP.setSearch(this.value)"/></label>' +
+          '</div>' +
+          (items.length ? '<div class="grid">'+cards+'</div>' : '<div class="empty-note">沒有符合「'+esc(state.search)+'」的項目。</div>') +
+        '</div>' +
+      '</div>'
+    );
+  }
+
+  /* ================= DETAIL MODAL ================= */
+  var PLANT_FIELD_ORDER = ['科別/生活型','原產地','特徵','用途','生態','繁殖方法','相近種類','別名','花期','備註'];
+
+  function openDetail(kind, subName, idx){
+    var isP = kind==='plants';
+    var subs = isP ? DATA.plants.subcats : DATA.materials.subcats;
+    var sub = subs.filter(function(s){return s.name===subName;})[0];
+    var it = sub.items[idx];
+    var body;
+    if (isP){
+      body = PLANT_FIELD_ORDER.filter(function(k){return it.fields[k];}).map(function(k){
+        return '<div class="field-row"><div class="label">'+esc(k)+'</div><div class="value">'+esc(it.fields[k])+'</div></div>';
+      }).join('');
+    } else {
+      body = '<ul>'+it.desc.map(function(d){return '<li>'+esc(d)+'</li>';}).join('')+'</ul>';
+    }
+    var html =
+      '<div class="backdrop" onclick="if(event.target===this)APP.closeDetail()" data-mode="'+kind+'">' +
+        '<div class="modal" role="dialog" aria-modal="true">' +
+          '<div class="modal-head">' +
+            '<div><span class="chip">'+esc(subName)+'</span><h3>'+esc(it.name)+'</h3></div>' +
+            '<button class="modal-close" onclick="APP.closeDetail()" aria-label="關閉">✕</button>' +
+          '</div>' +
+          '<div class="modal-body">'+body+'</div>' +
+        '</div>' +
+      '</div>';
+    var host = document.createElement('div');
+    host.id = 'modal-host';
+    host.innerHTML = html;
+    document.body.appendChild(host);
+    document.addEventListener('keydown', escHandler);
+  }
+  function escHandler(e){ if(e.key==='Escape') closeDetail(); }
+  function closeDetail(){
+    var host = document.getElementById('modal-host');
+    if (host) host.remove();
+    document.removeEventListener('keydown', escHandler);
+  }
+
+  /* ================= QUIZ GENERATION ================= */
+  function trimText(s, n){
+    s = String(s);
+    return s.length>n ? s.slice(0,n-1)+'…' : s;
+  }
+
+  var PLANT_Q_FIELDS = [
+    {key:'科別/生活型', label:'科別／生活型'},
+    {key:'原產地', label:'原產地'},
+    {key:'用途', label:'用途'},
+    {key:'繁殖方法', label:'繁殖方法'}
+  ];
+
+  function buildMCQ(promptHtml, correctText, distractorTexts, tag){
+    var opts = shuffle([{t:correctText, ok:true}].concat(distractorTexts.map(function(t){return {t:t, ok:false};})));
+    return {tag:tag, prompt:promptHtml, options:opts.map(function(o){return o.t;}), correctIndex: opts.findIndex(function(o){return o.ok;})};
+  }
+
+  /* Each try* function returns a question object, or null if not applicable — never calls another try* function,
+     so the chain in genPlantQuestion/genMaterialQuestion always terminates. */
+  function tryPlantFieldQ(item, pool){
+    var candidates = PLANT_Q_FIELDS.filter(function(f){ return item.fields[f.key]; });
+    if (!candidates.length) return null;
+    var f = pick(candidates);
+    var correct = item.fields[f.key];
+    var others = pool.filter(function(p){ return p.name!==item.name && p.fields[f.key] && p.fields[f.key]!==correct; });
+    if (others.length < 3) return null;
+    var distractors = sample(others,3).map(function(p){ return trimText(p.fields[f.key], 60); });
+    return buildMCQ('「'+esc(item.name)+'」的<b>'+esc(f.label)+'</b>為何？', trimText(correct,60), distractors, 'plant');
+  }
+  function tryPlantClueQ(item, pool){
+    var clueField = item.fields['特徵'] ? '特徵' : (item.fields['生態'] ? '生態' : null);
+    if (!clueField) return null;
+    var others = pool.filter(function(p){ return p.name!==item.name; });
+    if (others.length<3) return null;
+    var distractors = sample(others,3).map(function(p){return p.name;});
+    return buildMCQ('下列敘述描述的是哪一種植物？<br><span style="font-weight:400;color:var(--text-muted);display:block;margin-top:8px;font-size:14.5px;">「'+esc(trimText(item.fields[clueField],110))+'」</span>', item.name, distractors, 'plant');
+  }
+  function tryPlantCatQ(item, activeCatNames){
+    // only meaningful when 2+ plant categories are in scope (otherwise every correct answer is identical)
+    if (activeCatNames.length < 2) return null;
+    var others = activeCatNames.filter(function(c){return c!==item.cat;});
+    var distractors = sample(others, Math.min(3, others.length));
+    return buildMCQ('「'+esc(item.name)+'」屬於下列哪一個分類？', item.cat, distractors, 'plant');
+  }
+  function plantCatQAnyScope(item){
+    // guaranteed-safe fallback: ignores the active-scope restriction, uses the full category list
+    var others = plantCatNames.filter(function(c){return c!==item.cat;});
+    var distractors = sample(others,3);
+    return buildMCQ('「'+esc(item.name)+'」屬於下列哪一個分類？', item.cat, distractors, 'plant');
+  }
+  function genPlantQuestion(item, pool, activeCatNames){
+    var order = shuffle(['field','clue','cat']);
+    for (var i=0;i<order.length;i++){
+      var q = order[i]==='field' ? tryPlantFieldQ(item, pool) :
+              order[i]==='clue'  ? tryPlantClueQ(item, pool) :
+                                    tryPlantCatQ(item, activeCatNames);
+      if (q) return q;
+    }
+    return plantCatQAnyScope(item);
+  }
+
+  function tryMaterialCatQ(item){
+    var others = materialCatNames.filter(function(c){return c!==item.cat;});
+    var distractors = sample(others,3);
+    return buildMCQ('「'+esc(item.name)+'」屬於下列哪一個資材類別？', item.cat, distractors, 'material');
+  }
+  function tryMaterialClueQ(item, pool){
+    if (!item.desc.length) return null;
+    var clue = pick(item.desc);
+    var others = pool.filter(function(p){ return p.name!==item.name; });
+    if (others.length<3) return null;
+    var distractors = sample(others,3).map(function(p){return p.name;});
+    return buildMCQ('下列敘述描述的是哪一項資材？<br><span style="font-weight:400;color:var(--text-muted);display:block;margin-top:8px;font-size:14.5px;">「'+esc(trimText(clue,110))+'」</span>', item.name, distractors, 'material');
+  }
+  function genMaterialQuestion(item, pool){
+    var order = shuffle(['clue','cat']);
+    for (var i=0;i<order.length;i++){
+      var q = order[i]==='clue' ? tryMaterialClueQ(item, pool) : tryMaterialCatQ(item);
+      if (q) return q;
+    }
+    return tryMaterialCatQ(item); // materialCatNames always has >=3 alternatives, so this never returns null
+  }
+
+  function genOneQuestion(pools){
+    var usePlant;
+    if (!pools.materials.length) usePlant = true;
+    else if (!pools.plants.length) usePlant = false;
+    else usePlant = Math.random() < pools.plants.length/(pools.plants.length+pools.materials.length);
+
+    if (usePlant){
+      return genPlantQuestion(pick(pools.plants), pools.plants, pools.activeCatNames);
+    } else {
+      return genMaterialQuestion(pick(pools.materials), pools.materials);
+    }
+  }
+
+  function computeQuizPools(catSel){
+    var activeCatNames = QUIZ_CATS.filter(function(c){return c.type==='plant' && catSel[c.id];}).map(function(c){return c.match;});
+    var pPool = plantPool.filter(function(p){ return activeCatNames.indexOf(p.cat)!==-1; });
+    var mPool = catSel['m:all'] ? materialPool : [];
+    return {plants:pPool, materials:mPool, activeCatNames:activeCatNames};
+  }
+
+  function buildQuiz(catSel, total){
+    var pools = computeQuizPools(catSel);
+    if (pools.plants.length + pools.materials.length < 4) return [];
+    var qs = [], seen = {}, guardCount = 0;
+    while (qs.length < total && guardCount < total*30){
+      guardCount++;
+      var q = genOneQuestion(pools);
+      var key = q.tag+'|'+q.prompt+'|'+q.correctIndex+'|'+q.options.join(',');
+      if (seen[key]) continue;
+      seen[key] = true;
+      qs.push(q);
+    }
+    return qs;
+  }
+
+  /* ================= RENDER: QUIZ ================= */
+  function renderQuiz(){
+    var qz = state.quiz;
+    if (qz.phase==='settings') return renderQuizSettings();
+    if (qz.phase==='running') return renderQuizRunning();
+    return renderQuizSummary();
+  }
+
+  function renderQuizSettings(){
+    var qz = state.quiz;
+    var counts = [10,20,30,50];
+    var pools = computeQuizPools(qz.catSel);
+    var total = pools.plants.length + pools.materials.length;
+    var selectedCount = QUIZ_CATS.filter(function(c){return qz.catSel[c.id];}).length;
+    var allOn = selectedCount === QUIZ_CATS.length;
+
+    var catChips = QUIZ_CATS.map(function(c){
+      var on = !!qz.catSel[c.id];
+      return '<button class="checkchip" data-active="'+on+'" onclick="APP.toggleQuizCat(\''+c.id+'\')">' +
+        '<span class="box">'+(on?'✓':'')+'</span><span>'+esc(c.label)+'</span><span class="n">'+c.count+'</span>' +
+      '</button>';
+    }).join('');
+
+    var canStart = total >= 4;
+
+    return (
+      '<div class="quiz-wrap">' +
+        '<div class="quiz-card">' +
+          '<h2 style="margin-top:0;">開始隨機測驗</h2>' +
+          '<p style="color:var(--text-muted);font-size:14px;margin-top:-6px;">從講義內容隨機出選擇題，適合檢定前自我複習。</p>' +
+          '<div class="quiz-setting-row">' +
+            '<div class="label" style="display:flex;justify-content:space-between;align-items:center;">' +
+              '<span>測驗類別（可複選，'+selectedCount+' / '+QUIZ_CATS.length+' 類已選）</span>' +
+              '<button class="btn-ghost" style="padding:4px 12px;font-size:12.5px;" onclick="APP.toggleAllQuizCats('+(!allOn)+')">'+(allOn?'全部取消':'全選')+'</button>' +
+            '</div>' +
+            '<div class="checkgrid">'+catChips+'</div>' +
+          '</div>' +
+          '<div class="quiz-setting-row"><div class="label">題數</div><div class="pillset">' +
+            counts.map(function(c){return '<button class="pill" data-active="'+(qz.total===c)+'" onclick="APP.setQuizTotal('+c+')">'+c+' 題</button>';}).join('') +
+          '</div></div>' +
+          (canStart
+            ? '<p style="color:var(--text-muted);font-size:13px;margin:-6px 0 16px;">目前所選類別共 '+total+' 項可供出題。</p>'
+            : '<p style="color:var(--bad);font-size:13px;margin:-6px 0 16px;">請至少選擇一個類別（且項目總數需滿 4 項）才能開始測驗。</p>') +
+          '<button class="btn-primary" '+(canStart?'':'disabled style="opacity:.5;cursor:not-allowed;"')+' onclick="APP.startQuiz()">開始測驗</button>' +
+        '</div>' +
+      '</div>'
+    );
+  }
+
+  function renderQuizRunning(){
+    var qz = state.quiz;
+    var q = qz.questions[qz.idx];
+    var pct = Math.round((qz.idx)/qz.questions.length*100);
+    var optsHtml = q.options.map(function(opt, i){
+      var state_ = 'idle';
+      if (qz.answered){
+        if (i===q.correctIndex) state_ = 'correct';
+        else if (i===qz.chosen) state_ = 'wrong';
+      }
+      return '<button class="opt" data-state="'+state_+'" '+(qz.answered?'disabled':'')+' onclick="APP.answerQuiz('+i+')">'+
+        '<span class="k">'+String.fromCharCode(65+i)+'</span><span>'+esc(opt)+'</span>' +
+      '</button>';
+    }).join('');
+
+    var feedback = '';
+    if (qz.answered){
+      var ok = qz.chosen===q.correctIndex;
+      feedback = '<div class="feedback '+(ok?'correct':'wrong')+'">'+(ok?'✓ 答對了':'✕ 答錯了，正確答案是「'+esc(q.options[q.correctIndex])+'」')+'</div>';
+    }
+
+    return (
+      '<div class="quiz-wrap">' +
+        '<div class="quiz-card">' +
+          '<div class="qz-top"><span class="qz-progress">第 '+(qz.idx+1)+' / '+qz.questions.length+' 題</span><span class="qz-score">得分 '+qz.score+' / '+(qz.idx+(qz.answered?1:0))+'</span></div>' +
+          '<div class="progress-bar"><div style="width:'+pct+'%"></div></div>' +
+          '<span class="qz-tag '+q.tag+'">'+(q.tag==='plant'?'識別參考植物':'識別資材')+'</span>' +
+          '<p class="qz-question">'+q.prompt+'</p>' +
+          '<div class="options">'+optsHtml+'</div>' +
+          feedback +
+          '<div class="qz-actions">' +
+            (qz.answered ? '<button class="btn-primary" style="width:auto;" onclick="APP.nextQuiz()">'+(qz.idx+1<qz.questions.length?'下一題 →':'查看結果 →')+'</button>' : '') +
+          '</div>' +
+        '</div>' +
+      '</div>'
+    );
+  }
+
+  function renderQuizSummary(){
+    var qz = state.quiz;
+    var pct = Math.round(qz.score/qz.questions.length*100);
+    var msg = pct>=90 ? '非常熟練，保持下去！' : pct>=70 ? '掌握得不錯，再加強弱項即可。' : '建議再回去分類頁面複習相關項目。';
+    var reviewHtml = qz.review.length ? qz.review.map(function(r){
+      return '<div class="review-item"><div class="q">'+r.prompt.replace(/<br>.*$/,'')+'</div>' +
+        '<div><span class="a wrong-was">'+esc(r.chosenText)+'</span><span class="a">→ '+esc(r.correctText)+'</span></div></div>';
+    }).join('') : '<div style="color:var(--text-muted);font-size:13.5px;">全部答對，沒有需要複習的題目！</div>';
+
+    return (
+      '<div class="quiz-wrap">' +
+        '<div class="quiz-card">' +
+          '<h2 style="margin-top:0;">測驗結果</h2>' +
+          '<div class="summary-score"><span class="big mono">'+qz.score+'</span><span class="of">/ '+qz.questions.length+' 題　（'+pct+'%）</span></div>' +
+          '<div class="summary-msg">'+msg+'</div>' +
+          (qz.review.length ? '<div class="quiz-setting-row"><div class="label">答錯題目回顧</div></div>' : '') +
+          '<div class="review-list">'+reviewHtml+'</div>' +
+          '<button class="btn-ghost" onclick="APP.resetQuiz()">重新設定測驗</button>' +
+        '</div>' +
+      '</div>'
+    );
+  }
+
+  /* ================= MAIN RENDER ================= */
+  function render(){
+    renderTabs();
+    if (state.mode==='quiz') root.innerHTML = renderQuiz();
+    else root.innerHTML = renderBrowse(state.mode);
+  }
+
+  /* ================= PUBLIC API ================= */
+  window.APP = {
+    setMode: function(m){ state.mode=m; state.search=''; render(); window.scrollTo({top:0}); },
+    setCat: function(kind,name){ if(kind==='plants') state.plantCat=name; else state.materialCat=name; state.search=''; render(); },
+    setSearch: function(v){ state.search=v; render(); var el=document.querySelector('.search input'); if(el){el.focus(); el.selectionStart=el.selectionEnd=el.value.length;} },
+    openDetail: openDetail,
+    closeDetail: closeDetail,
+    toggleQuizCat: function(id){ var qz=state.quiz; qz.catSel[id] = !qz.catSel[id]; render(); },
+    toggleAllQuizCats: function(on){ var qz=state.quiz; QUIZ_CATS.forEach(function(c){ qz.catSel[c.id]=on; }); render(); },
+    setQuizTotal: function(n){ state.quiz.total=n; render(); },
+    startQuiz: function(){
+      var qz = state.quiz;
+      var qs = buildQuiz(qz.catSel, qz.total);
+      if (!qs.length) { render(); return; }
+      qz.questions = qs;
+      qz.idx = 0; qz.score = 0; qz.answered = false; qz.chosen = null; qz.review = [];
+      qz.phase = 'running';
+      render();
+    },
+    answerQuiz: function(i){
+      var qz = state.quiz;
+      if (qz.answered) return;
+      qz.answered = true; qz.chosen = i;
+      var q = qz.questions[qz.idx];
+      if (i===q.correctIndex){ qz.score++; }
+      else { qz.review.push({prompt:q.prompt, chosenText:q.options[i], correctText:q.options[q.correctIndex]}); }
+      render();
+    },
+    nextQuiz: function(){
+      var qz = state.quiz;
+      if (qz.idx+1 < qz.questions.length){
+        qz.idx++; qz.answered=false; qz.chosen=null; render();
+      } else {
+        qz.phase='summary'; render();
+      }
+    },
+    resetQuiz: function(){ state.quiz.phase='settings'; render(); }
+  };
+
+  render();
+})();
+</script>
